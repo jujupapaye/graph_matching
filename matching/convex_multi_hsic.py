@@ -7,9 +7,9 @@
 #####################
 
 import numpy as np
-import matching.convexminimization2 as cvm
-from matching.util import *
-from matching.approximation_transformation import *
+import convexminimization2 as cvm
+from util import *
+from approximation_transformation import *
 
 
 #création de la fonction objectif (hsic) où K est une liste de matrice de gram, pi est une liste de permutation, c l'hyperparamètre
