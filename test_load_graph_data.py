@@ -11,8 +11,8 @@ if __name__ == "__main__":
     ax = fig.add_subplot(111, projection='3d')
 
     #plot the sphere
-    u = np.linspace(0, 2 * np.pi, 10)
-    v = np.linspace(0, np.pi, 10)
+    u = np.linspace(0, 2 * np.pi, 100)
+    v = np.linspace(0, np.pi, 100)
     x = 99 * np.outer(np.cos(u), np.sin(v))
     y = 99 * np.outer(np.sin(u), np.sin(v))
     z = 99 * np.outer(np.ones(np.size(u)), np.cos(v))
@@ -25,10 +25,9 @@ if __name__ == "__main__":
         count += 1
         if count < 10:
             for node in G.nodes:
-                if node < 6:
+                if node < colormap.shape[0]:
                     x = G.nodes[node]['coord'][0]
                     y = G.nodes[node]['coord'][1]
                     z = G.nodes[node]['coord'][2]
                     ax.scatter(x, y, z, c=colormap[node % colormap.shape[0]], marker='.')
-
     plt.show()
