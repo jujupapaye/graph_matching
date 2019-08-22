@@ -1,5 +1,9 @@
 import os.path as op
 import pickle
+from convex_multi_hsic import *
+import networkx as nx
+from show_results_on_sphere import *
+from util import *
 
 if __name__ == '__main__':
     # parameters
@@ -9,6 +13,7 @@ if __name__ == '__main__':
 
     # define directories
     gram_dir = '/home/jul/Documents/cours/STAGE/CKS/radius_60/'
+    graph_dir = '/home/jul/Documents/cours/STAGE/CKS/pytorch_graph_pits/data/'
 
     subjects_list = ['OAS1_0006', 'OAS1_0009', 'OAS1_0025', 'OAS1_0049', 'OAS1_0051', 'OAS1_0054', 'OAS1_0055',
                      'OAS1_0057', 'OAS1_0059', 'OAS1_0061', 'OAS1_0077', 'OAS1_0079', 'OAS1_0080', 'OAS1_0087',
@@ -45,10 +50,49 @@ if __name__ == '__main__':
     # 0 (hopefully adding the depth should help a bit more)
 
     K_list = []
+    graph_list = []
+    nb_s = 0
     for subject in subjects_list:
         gram_path = op.join(gram_dir, 'K_{}_{}.pck'.format(subject, hem))
+        graph_path = graph_dir + 'full_lh_' + subjects_list[nb_s] + '_pitgraph.gpickle'
         f = open(gram_path, 'rb')
         K = pickle.load(f)
-        K_list.append(K[:, :, subkernel_ind])
+        if K.shape[0] == 86:
+            center_K = centered_matrix(K[:, :, subkernel_ind])
+            center_K = normalized_matrix(center_K)
+            K_list.append(center_K)
+            G = nx.read_gpickle(graph_path)
+            graph_list.append(G)
+        nb_s += 1
 
-    #traitement des matrices de gram : ajout de lignes de NaN
+    # traitement des matrices de gram : ajout de lignes de NaN (pour l'instant de 0)
+
+    nb_patients = len(K_list)
+    nb_pits = 86
+    # new_K_list = np.zeros((nb_patients, max, max))
+    # new_K_list.fill(np.nan)
+
+    '''for k in range(len(K_list)):
+        for i in range(K_list[k].shape[0]):
+            for j in range(K_list[k].shape[1]):
+                new_K_list[i, j] = K_list[k][i, j]'''
+
+    perms = np.zeros((nb_patients, nb_pits, nb_pits))
+    perms[0] = np.eye(nb_pits)
+
+    for p in range(1, len(perms)):
+        # perms[p] = init_eig(K_list[0], K_list[p], nb_pits)
+        perms[p] = init_random(nb_pits)
+
+    c, mu, mu_min, it, nb_tour = 1, 0.1, 1e-8, 500, 1
+
+    perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
+
+    sorted_indices = np.zeros((nb_patients, nb_pits))
+    t = np.zeros((nb_patients, nb_pits, 2))
+    res = np.zeros((nb_patients, nb_pits, nb_pits))
+
+    for i in range(1, nb_patients):
+        res[i], t[i] = transformation_permutation(perms_opt[i])
+        # sorted_indices[i] = res[i].argmax(axis=1)
+    show_sphere(t, graph_list)

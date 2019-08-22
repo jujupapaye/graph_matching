@@ -10,7 +10,7 @@ if __name__ == "__main__":
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    #plot the sphere
+    # plot the sphere
     u = np.linspace(0, 2 * np.pi, 100)
     v = np.linspace(0, np.pi, 100)
     x = 99 * np.outer(np.cos(u), np.sin(v))

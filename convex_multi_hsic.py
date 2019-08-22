@@ -5,19 +5,16 @@
 # fonctions de création des fonctions objectif, gradient + estimation des matrices de permutations à partir des n noyaux à comparer
 
 #####################
-
-import numpy as np
-import convexminimization2 as cvm
-from util import *
 from approximation_transformation import *
 
 
 #création de la fonction objectif (hsic) où K est une liste de matrice de gram, pi est une liste de permutation, c l'hyperparamètre
-def create_objective_function(K,pi,c,ind,res1,res2,res3):
-    assert len(K)==len(pi)
+def create_objective_function(K, pi, c, ind, res1, res2, res3):
+    assert len(K) == len(pi)
+
     def objective_function(beta):
         n = K[0].shape[0]
-        UN = np.ones((n,1))
+        UN = np.ones((n, 1))
         constraints = np.linalg.norm(beta @ UN - UN)**2 + np.linalg.norm(beta.T @ UN - UN)**2
         r1 = res1 * (beta @ K[ind] @ beta.T)
         r2 = res2 @ (UN.T @ beta @ K[ind] @ beta.T @ UN)
@@ -29,13 +26,14 @@ def create_objective_function(K,pi,c,ind,res1,res2,res3):
         return result
     return objective_function
 
-#creation du gradient ou K est une liste de matrice de Gram , pi une liste de permuations,c paramètre de poids des contraintes, beta la permutation qu'on cherche
-#ind indique par rapport à quel permutation on dérive (on dérive par rapport à pi[ind])
-def create_gradient_function(ind,K,pi,c,tmp1,tmp2,tmp3):
-    assert len(K)==len(pi)
+
+# creation du gradient ou K est une liste de matrice de Gram , pi une liste de permuations,c paramètre de poids des contraintes, beta la permutation qu'on cherche
+# ind indique par rapport à quel permutation on dérive (on dérive par rapport à pi[ind])
+def create_gradient_function(ind, K, pi, c, tmp1, tmp2, tmp3):
+    assert len(K) == len(pi)
+
     def gradient_function(beta):
-        n=K[0].shape[0]
-        N = len(K)
+        n = K[0].shape[0]
         UN = np.ones((n, 1))
         constraints = np.ones((n, n)) @ beta + beta @ np.ones((n, n)) - 2 * np.ones((n, n))
         r1 = 2 * tmp1 @ beta @ K[ind]
@@ -48,13 +46,12 @@ def create_gradient_function(ind,K,pi,c,tmp1,tmp2,tmp3):
     return gradient_function
 
 
-
-#prend une liste K de matrices noyaux centrées et une liste pi de permutations (les matrices d'initialisation)
-#retourne l'estimation des pi après descente du gradient
+# prend une liste K de matrices noyaux centrées et une liste pi de permutations (les matrices d'initialisation)
+# retourne l'estimation des pi après descente du gradient
 def estimate_perms(K, pi, c, mu, mu_min, it, nbtour):
     indice = 1
     n = K[0].shape[0]
-    pi[0] = np.eye(n)  #la première permutation sera toujours l'identité (on compare un ensemble avec lui même)
+    pi[0] = np.eye(n)  # la première permutation sera toujours l'identité (on compare un ensemble avec lui même)
     UN = np.ones((n, 1))
     for i in range(1, n*nbtour):
         if i != 0:

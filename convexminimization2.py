@@ -70,10 +70,10 @@ def monotone_fista_support(fobj, fgrad, beta, mu, mu_min, iterations, projector)
     tk = 1.0
     d = beta.shape
 
-    xk = beta.copy()  #np.zeros(d)
-    yk = beta.copy()  #np.zeros(d)
-    zk = beta.copy()  #np.zeros(d)
-    old_xk = beta.copy()  #np.zeros(d)
+    xk = beta.copy()  # np.zeros(d)
+    yk = beta.copy()  # np.zeros(d)
+    zk = beta.copy()  # np.zeros(d)
+    old_xk = beta.copy()  # np.zeros(d)
     qval = 0.0
 
     mu_step = mu
@@ -104,7 +104,7 @@ def monotone_fista_support(fobj, fgrad, beta, mu, mu_min, iterations, projector)
         if fval < qval:
             xk = np.copy(zk)
             yplot.append(fval)
-            #print(xk)
+            # print(xk)
         else:
             yplot.append(qval)
 
@@ -113,6 +113,6 @@ def monotone_fista_support(fobj, fgrad, beta, mu, mu_min, iterations, projector)
 
         yk = xk + old_tk / tk * (zk - xk) + (old_tk - 1.0) / tk * (xk - old_xk)
         old_xk = np.copy(xk)
-    #plt.scatter(range(len(yplot)),yplot,s=1)
-    #plt.show()
+    # plt.scatter(range(len(yplot)),yplot,s=1)
+    # plt.show()
     return xk, mu_step
