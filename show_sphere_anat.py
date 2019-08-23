@@ -42,6 +42,13 @@ if __name__ == "__main__":
         meshes += pit0
         textures = np.concatenate((textures, np.ones(pit0.vertices.shape[0]) * pit_col_val))
 
+
+
+    ROI = trim.primitives.Sphere(radius=40, subdivisions=1)
+    trans_pit0[:, 3] = [-43, 6, 89, 1]
+    ROI.apply_transform(trans_pit0)
+    meshes += ROI
+    textures = np.concatenate((textures, np.ones(ROI.vertices.shape[0]) * 20))
     splt.pyglet_plot(meshes, values=textures, color_map='jet', plot_colormap=True, caption='test')
 
 
