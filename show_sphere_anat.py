@@ -29,23 +29,24 @@ if __name__ == "__main__":
     parcels_value = parcels[0]
     textures = parcels_value
 
-    nb_pits = len(graphs[subj_ind].nodes)
-    pit_col_val = 10
-    for pit in range(nb_pits):
-        x0 = graphs[subj_ind].nodes[pit]['coord'][0]
-        y0 = graphs[subj_ind].nodes[pit]['coord'][1]
-        z0 = graphs[subj_ind].nodes[pit]['coord'][2]
-        pit0 = trim.primitives.Sphere(radius=1, subdivisions=0)
-        trans_pit0[:, 3] = [x0, y0, z0, 1]
-        pit0.apply_transform(trans_pit0)
-
-        meshes += pit0
-        textures = np.concatenate((textures, np.ones(pit0.vertices.shape[0]) * pit_col_val))
+    # nb_pits = len(graphs[subj_ind].nodes)
+    # pit_col_val = 10
+    # for pit in range(nb_pits):
+    #     x0 = graphs[subj_ind].nodes[pit]['coord'][0]
+    #     y0 = graphs[subj_ind].nodes[pit]['coord'][1]
+    #     z0 = graphs[subj_ind].nodes[pit]['coord'][2]
+    #     pit0 = trim.primitives.Sphere(radius=1, subdivisions=0)
+    #     trans_pit0[:, 3] = [x0, y0, z0, 1]
+    #     pit0.apply_transform(trans_pit0)
+    #
+    #     meshes += pit0
+    #     textures = np.concatenate((textures, np.ones(pit0.vertices.shape[0]) * pit_col_val))
 
 
 
     ROI = trim.primitives.Sphere(radius=40, subdivisions=1)
-    trans_pit0[:, 3] = [-43, 6, 89, 1]
+    #trans_pit0[:, 3] = [-43, 6, 89, 1]
+    trans_pit0[:, 3] = [-48, 8, -87, 1]
     ROI.apply_transform(trans_pit0)
     meshes += ROI
     textures = np.concatenate((textures, np.ones(ROI.vertices.shape[0]) * 20))
