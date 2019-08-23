@@ -94,18 +94,6 @@ if __name__ == '__main__':
     # parameters of the gradient descent
     c, mu, mu_min, it, nb_tour = 1e12, 1e-3, 1e-20, 500, 3    # (params pour 3 patients)
     # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
-    '''mu = [1e-3, 0.01, 0.1, 1, 2, 12, 50, 100]
-    mu_min = [1e-3, 1e-5, 1e-6, 1e-8, 1e-10, 1e-12, 1e-15]
-    it = [300]
-    c = [0.0001, 0.001, 0.1, 1, 2, 3, 5, 10]
-    nb_tour = 1'''
-
-    '''for i in range(len(mu)):
-        for j in range(len(mu_min)):
-            for k in range(len(it)):
-                for l in range(len(c)):
-                    if mu >= mu_min:
-                        print("parametre:", c[l], mu[i], mu_min[j], it[k])'''
 
     init = perms.copy()
     perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)

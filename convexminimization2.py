@@ -83,6 +83,9 @@ def monotone_fista_support(fobj, fgrad, beta, mu, mu_min, iterations, projector)
         grad = fgrad(yk)
         yval = fobj(yk)
         fval = qval + 1.0
+        # print("it", i)
+        # print("yval", yval)
+        # print("grad", grad)
 
         # Backtrack search for alpha
         mu_step *= 2.0
@@ -104,7 +107,6 @@ def monotone_fista_support(fobj, fgrad, beta, mu, mu_min, iterations, projector)
         if fval < qval:
             xk = np.copy(zk)
             yplot.append(fval)
-            # print(xk)
         else:
             yplot.append(qval)
 
