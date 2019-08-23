@@ -1,15 +1,28 @@
 #####################
 
-#Les fonctions utiles pour la minimisation convexe du HSIC pour n ensembles
-#  argmin HSIC(K0,K1,...KN) + c *contrainte    où contrainte = sommes des lignes/collonnes à 1
-# fonctions de création des fonctions objectif, gradient + estimation des matrices de permutations à partir des n noyaux à comparer
+# Fonctions utiles pour la minimisation convexe du HSIC pour n ensembles
+#  argmin -HSIC(K0,K1,...KN) + c *contrainte    où contrainte = sommes des lignes/collonnes à 1
+# fonctions de création des fonctions objectif, gradient
+# et estimation des matrices de permutations à partir des n noyaux à comparer
 
 #####################
 from approximation_transformation import *
+from util import *
 
 
-#création de la fonction objectif (hsic) où K est une liste de matrice de gram, pi est une liste de permutation, c l'hyperparamètre
 def create_objective_function(K, pi, c, ind, res1, res2, res3):
+    """
+    création de la fonction objectif (hsic)
+
+    :param K: list of gram matrix to compare
+    :param pi: list of permutation (initialisation matrix)
+    :param c: hyperparameter
+    :param ind:
+    :param res1:
+    :param res2:
+    :param res3:
+    :return: valeur de la fonction objectif pour les paramètres entrés
+    """
     assert len(K) == len(pi)
 
     def objective_function(beta):
@@ -27,9 +40,18 @@ def create_objective_function(K, pi, c, ind, res1, res2, res3):
     return objective_function
 
 
-# creation du gradient ou K est une liste de matrice de Gram , pi une liste de permuations,c paramètre de poids des contraintes, beta la permutation qu'on cherche
-# ind indique par rapport à quel permutation on dérive (on dérive par rapport à pi[ind])
 def create_gradient_function(ind, K, pi, c, tmp1, tmp2, tmp3):
+    """
+    Création de la fonction gradient pour le HSIC multiple
+    :param ind:
+    :param K: list of gram matrix to compare
+    :param pi: list of permutation (initialisation matrix)
+    :param c:
+    :param tmp1:
+    :param tmp2:
+    :param tmp3:
+    :return: gradient(HSIC)
+    """
     assert len(K) == len(pi)
 
     def gradient_function(beta):
@@ -46,9 +68,20 @@ def create_gradient_function(ind, K, pi, c, tmp1, tmp2, tmp3):
     return gradient_function
 
 
-# prend une liste K de matrices noyaux centrées et une liste pi de permutations (les matrices d'initialisation)
-# retourne l'estimation des pi après descente du gradient
 def estimate_perms(K, pi, c, mu, mu_min, it, nbtour):
+    """
+    Estimation des permutations pi par descente du gradient pour
+    la minimisation du HSIC
+
+    :param K: list of gram matrix to compare
+    :param pi: list of permutation (initialisation matrix)
+    :param c: hyperparameter
+    :param mu: initial step for the gradient descent
+    :param mu_min: minimum step for the gradient descent
+    :param it: number of iterations
+    :param nbtour: number of tours that we do
+    :return:
+    """
     indice = 1
     n = K[0].shape[0]
     pi[0] = np.eye(n)  # la première permutation sera toujours l'identité (on compare un ensemble avec lui même)
@@ -71,6 +104,7 @@ def estimate_perms(K, pi, c, mu, mu_min, it, nbtour):
                     tmp3 = tmp3 * (pi[j] @ K[j] @ pi[j].T @ UN)
             objective = create_objective_function(K, pi, c, indice, res1, res2, res3)
             gradient = create_gradient_function(indice, K, pi, c, tmp1, tmp2, tmp3)
-            pi[indice], mu_est = cvm.monotone_fista_support(objective, gradient, pi[indice], mu,mu_min, it, neg_projector)
+            gradient = normalized_matrix(gradient)
+            pi[indice], mu_est = cvm.monotone_fista_support(objective, gradient, pi[indice], mu, mu_min, it, neg_projector)
             indice = (indice+1) % len(K)
     return pi

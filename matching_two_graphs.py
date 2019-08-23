@@ -1,3 +1,7 @@
+"""
+Test matching pour 2 graphes
+"""
+
 import os.path as op
 import pickle
 from convex_simple_hsic import *
@@ -5,6 +9,11 @@ from util import *
 from approximation_transformation import *
 from show_results_on_sphere import *
 import networkx as nx
+
+
+def calcul_fobj(K0, K1, p):
+    return np.linalg.norm(K0 @ p.T - p.T @ K1.T) ** 2, p.copy()
+
 
 if __name__ == '__main__':
     # parameters
@@ -54,37 +63,54 @@ if __name__ == '__main__':
         gram_path = op.join(gram_dir, 'K_{}_{}.pck'.format(subject, hem))
         f = open(gram_path, 'rb')
         K = pickle.load(f)
-        center_K = centered_matrix(K[:, :, subkernel_ind])
-        # center_K = normalized_matrix(center_K)
+        center_K = centered_matrix(K[:, :, subkernel_ind])  # centrage des données
         K_list.append(center_K)
         if K.shape[0] == 86:
             print(len(K_list)-1)
 
+    s0 = input("Entrez le numéro du premier sujet à comparer: (entre 0 et 134)")
+    s1 = input("Entrez le numéro du deuxième sujet à comparer: (entre 0 et 134)")
+
     K0 = K_list[17]
     K1 = K_list[28]
-    K0 = normalized_matrix(K0)
+    K0 = normalized_matrix(K0)  # normalisation des données
     K1 = normalized_matrix(K1)
-    nb_pits = 86
+    nb_pits = max(K0.shape[0], K1.shape[0])
 
-    mu = 0.1
+    # parameters for gradient descent
+    mu = 1
     mu_min = 1e-8
-    it = 1000
+    it = 1500
     c = 1
-    nb_test = 1
+    nb_test = 100
 
-    print("Paramètre mu/mu_min/it/c/nb_test", mu, mu_min, it, c, nb_test)
+    print("Paramètre mu/mu_min/it/c/nb_:", mu, mu_min, it, c, nb_test)
+
+    init = init_eig(K0, K1, nb_pits)
+    res = estimate_perm(K0, K1, init, c, mu, mu_min, it)  # méthode minimisation convex
+    t = transformation_permutation_hungarian(res)
+    sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1 pour toutes les lignes
+    min_obj, p_min = calcul_fobj(K0, K1, t[0])
+    print("Min(eig)", min_obj)
 
     for i in range(nb_test):
-        # init = init_random(nb_pits)
-        init = init_eig(K0, K1, nb_pits)
+        init = init_random(nb_pits)
+        # init = init_eig(K0, K1, nb_pits)
         res = estimate_perm(K0, K1, init, c, mu, mu_min, it)  # méthode minimisation convex
         t = transformation_permutation_hungarian(res)
         sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1
+        perm = t[0].copy()
+        obj = calcul_fobj(K0, K1, perm)[0]
+        if obj < min_obj:
+            min_obj = obj
+            p_min = perm.copy()
+            print("New min :", min_obj)
 
     dir = '/home/jul/Documents/cours/STAGE/CKS/pytorch_graph_pits/data/'
     path0 = 'full_lh_' + subjects_list[17] + '_pitgraph.gpickle'
     path1 = 'full_lh_' + subjects_list[28] + '_pitgraph.gpickle'
     g0 = nx.read_gpickle(dir + path0)
     g1 = nx.read_gpickle(dir + path1)
-    # show_sphere_for_2_patients(sorted_indices, g0, g1)
-    show_sphere_for_2(sorted_indices, g0, g1)
+
+    match = p_min.argmax(axis=1)
+    show_sphere_for_2(match, g0, g1)

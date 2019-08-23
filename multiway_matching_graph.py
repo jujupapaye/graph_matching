@@ -1,3 +1,7 @@
+"""
+Tests du matching de plusieurs graphes de pits
+"""
+
 import os.path as op
 import pickle
 from convex_multi_hsic import *
@@ -49,23 +53,26 @@ if __name__ == '__main__':
     # 3 (this should improve things a bit by adding the structure of the graph in the kernel computation)
     # 0 (hopefully adding the depth should help a bit more)
 
-    K_list = []
-    graph_list = []
-    nb_s = 0
+    K_list = []  # list of gram matrix
+    graph_list = []  # list of corresponding graphs
+    nb_s = 0  # number of subjects
+    number = 0
     for subject in subjects_list:
         gram_path = op.join(gram_dir, 'K_{}_{}.pck'.format(subject, hem))
         graph_path = graph_dir + 'full_lh_' + subjects_list[nb_s] + '_pitgraph.gpickle'
         f = open(gram_path, 'rb')
         K = pickle.load(f)
-        if K.shape[0] == 86:
-            center_K = centered_matrix(K[:, :, subkernel_ind])
-            center_K = normalized_matrix(center_K)
+        if K.shape[0] == 86 and number <= 3:
+            number += 1
+            center_K = centered_matrix(K[:, :, subkernel_ind])  # centrage des matrices
+            center_K = normalized_matrix(center_K)   # normalisation des données
             K_list.append(center_K)
             G = nx.read_gpickle(graph_path)
             graph_list.append(G)
         nb_s += 1
 
-    # traitement des matrices de gram : ajout de lignes de NaN (pour l'instant de 0)
+
+    # traitement des matrices de gram -> les mettre toute à la même taille
 
     nb_patients = len(K_list)
     nb_pits = 86
@@ -81,18 +88,31 @@ if __name__ == '__main__':
     perms[0] = np.eye(nb_pits)
 
     for p in range(1, len(perms)):
-        # perms[p] = init_eig(K_list[0], K_list[p], nb_pits)
-        perms[p] = init_random(nb_pits)
+        perms[p] = init_eig(K_list[0], K_list[p], nb_pits)
+        # perms[p] = init_random(nb_pits)   # initialisation des permutations
 
-    c, mu, mu_min, it, nb_tour = 1, 0.1, 1e-8, 500, 1
+    # parameters of the gradient descent
+    c, mu, mu_min, it, nb_tour = 1e12, 1e-3, 1e-20, 500, 3    # (params pour 3 patients)
+    # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
+    '''mu = [1e-3, 0.01, 0.1, 1, 2, 12, 50, 100]
+    mu_min = [1e-3, 1e-5, 1e-6, 1e-8, 1e-10, 1e-12, 1e-15]
+    it = [300]
+    c = [0.0001, 0.001, 0.1, 1, 2, 3, 5, 10]
+    nb_tour = 1'''
 
+    '''for i in range(len(mu)):
+        for j in range(len(mu_min)):
+            for k in range(len(it)):
+                for l in range(len(c)):
+                    if mu >= mu_min:
+                        print("parametre:", c[l], mu[i], mu_min[j], it[k])'''
+
+    init = perms.copy()
     perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
 
-    sorted_indices = np.zeros((nb_patients, nb_pits))
     t = np.zeros((nb_patients, nb_pits, 2))
     res = np.zeros((nb_patients, nb_pits, nb_pits))
 
     for i in range(1, nb_patients):
         res[i], t[i] = transformation_permutation(perms_opt[i])
-        # sorted_indices[i] = res[i].argmax(axis=1)
-    show_sphere(t, graph_list)
+    # show_sphere(t, graph_list)

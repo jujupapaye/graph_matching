@@ -1,6 +1,6 @@
 #####################
 
-#Les fonctions utiles pour la minimisation convexe du HSIC pour 2 ensembles
+# Les fonctions utiles pour la minimisation convexe du HSIC pour 2 ensembles
 #  argmin ||K @ X-X.T @ L.T||^2 + c *contrainte    où contrainte = sommes des lignes/colonnes à 1
 # fonctions de création des fonctions objectif, gradient + estimation d'une permutation à partir de 2 noyaux à comparer
 
@@ -11,6 +11,14 @@ from approximation_transformation import *
 
 
 def create_objective_function(K, L, pi, c):
+    """
+
+    :param K:
+    :param L:
+    :param pi:
+    :param c:
+    :return:
+    """
     def objective_function(beta):
         n = K.shape[0]
         UN = np.ones((n, 1))
@@ -21,6 +29,14 @@ def create_objective_function(K, L, pi, c):
 
 
 def create_gradient_function(K, L, pi, c):
+    """
+
+    :param K:
+    :param L:
+    :param pi:
+    :param c:
+    :return:
+    """
     def gradient_function(beta):
         n = K.shape[0]
         result = 2*(beta @ K.T @ K - L @ beta @ K) - 2*(L.T @ beta @ K.T - L.T @ L @ beta)
@@ -34,6 +50,17 @@ def create_gradient_function(K, L, pi, c):
 # init la matrice d'initialisation de la descente du gradient, c l'hyperparamètre qui impose le poids des contraintes,
 # it le nombre d'itérations à faire pour la descente
 def estimate_perm(K, L, init, c, mu, mu_min, it):
+    """
+
+    :param K: gram matrix of the first set to compare
+    :param L: gram matrix of the second set to compare
+    :param init: initialisation matrix
+    :param c: hyperparameter
+    :param mu:
+    :param mu_min:
+    :param it:
+    :return:
+    """
     objective = create_objective_function(K, L, init, c)
     gradient = create_gradient_function(K, L, init, c)
     pi, mu_est = cvm.monotone_fista_support(objective, gradient, init, mu,mu_min, it, neg_projector)

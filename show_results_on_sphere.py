@@ -4,11 +4,16 @@ import trimesh as trim
 
 
 def show_sphere_for_2_patients(matching, g0, g1):
-    '''
-    matching : array of sorted indices where the node number matching[i] of g0 correspond to the i node of g1
-    g0, g1: graphs to match
-    using matplotlib
-    '''
+    """
+    Representation of two patients matching of sulcal pits
+    Show a sphere representing a brain where points are sulcal pits. Two points have the same colors if they are matched
+    (using matplotlib)
+
+    Parameters :
+    -matching : array of sorted indices where the node number matching[i] of g0 correspond to the i node of g1
+    -g0, g1: graphs to match
+
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     ax.set_xlim(-100, 100)
@@ -37,16 +42,23 @@ def show_sphere_for_2_patients(matching, g0, g1):
 
 
 def show_sphere_for_2(matching, g0, g1):
-    '''
-    matching : array of sorted indices where the node number matching[i] of g0 correspond to the i node of g1
-    g0, g1: graphs to match
-    using trimesh
-    '''
+    """
+    Representation of two patients matching of sulcal pits
+    Show a sphere representing a brain where points are sulcal pits. Two points have the same colors if they are matched
+    (using trimesh/ slam)
+
+    Parameters :
+    -matching : array of sorted indices where the node number matching[i] of g0 correspond to the i node of g1
+    -g0, g1: graphs to match
+
+    """
     color_hex = np.array(['#000000', '#6e2c00',  '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1', '#ecf0f1', '#f1c40f', '#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
     sphere_mesh = trim.primitives.Sphere(radius=100)
     transfo_pit0 = np.eye(4)
     transfo_pit1 = np.eye(4)
+    pairs_nb = 0
     for node in range(0, matching.shape[0]):
+        pairs_nb += 1
         color = trim.visual.color.hex_to_rgba(color_hex[node % color_hex.shape[0]])
 
         x0 = g0.nodes[matching[node]]['coord'][0]
@@ -66,11 +78,21 @@ def show_sphere_for_2(matching, g0, g1):
         pit1.visual.face_colors = color
 
         sphere_mesh = sphere_mesh + pit0 + pit1
-    sphere_mesh.show()
+        if pairs_nb % color_hex.shape[0] == 0:
+            sphere_mesh.show()
+            sphere_mesh = trim.primitives.Sphere(radius=100)
 
 
 def show_sphere(matching_list, graphs):
-    color_hex = np.array(['#000000', '#6e2c00', '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1', '#ecf0f1', '#f1c40f','#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
+    """
+    Representation of multiple graphs matching of sulcal pits
+    Show a sphere representing a brain where points are sulcal pits. Two points have the same colors if they are matched
+    (using trimesh/ slam)
+
+    :param matching_list: list of array of matching indices
+    :param graphs: list of corresponding graphs
+    """
+    color_hex = np.array(['#000000', '#6e2c00', '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1', '#ecf0f1', '#f1c40f', '#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
     sphere_mesh = trim.primitives.Sphere(radius=100)
 
     nb_patients = matching_list.shape[0]
@@ -83,7 +105,7 @@ def show_sphere(matching_list, graphs):
     trans_pit0 = np.eye(4)
     trans_pit1 = np.eye(4)
 
-    for pit in range(nb_pits):
+    for pit in range(0, nb_pits):
         color = trim.visual.color.hex_to_rgba(color_hex[pit % color_hex.shape[0]])
         x0 = graphs[0].nodes[pit]['coord'][0]
         y0 = graphs[0].nodes[pit]['coord'][1]
@@ -106,5 +128,7 @@ def show_sphere(matching_list, graphs):
             pit1.visual.face_colors = color
 
             sphere_mesh += pit1
+        if pit == color_hex.shape[0] - 1:
+            break
 
     sphere_mesh.show()
