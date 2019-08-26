@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import trimesh as trim
+import slam.plot as splt
 
 
 def show_sphere_for_2_patients(matching, g0, g1):
@@ -22,7 +23,8 @@ def show_sphere_for_2_patients(matching, g0, g1):
     ax.set_zlim(-100, 100)
     ax.set_facecolor('black')
 
-    colormap = np.array(['black', 'darkred', 'sienna', 'darkcyan', 'pink', 'r', 'g', 'b', 'midnightblue', 'violet', 'gold'])
+    colormap = np.array(['black', 'darkred', 'sienna', 'darkcyan', 'pink', 'r', 'g', 'b', 'midnightblue', 'violet',
+                         'gold'])
     markers = np.array(['.', "o", "v", "s", "P", "*", "x"])
 
     m = 0  # numero du markers
@@ -53,7 +55,8 @@ def show_sphere_for_2(matching, g0, g1):
     -g0, g1: graphs to match
 
     """
-    color_hex = np.array(['#000000', '#6e2c00',  '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1', '#ecf0f1', '#f1c40f', '#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
+    color_hex = np.array(['#000000', '#6e2c00',  '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1',
+                          '#ecf0f1', '#f1c40f', '#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
     sphere_mesh = trim.primitives.Sphere(radius=100)
     transfo_pit0 = np.eye(4)
     transfo_pit1 = np.eye(4)
@@ -93,11 +96,13 @@ def show_sphere(matching_list, graphs):
     :param matching_list: list of array of matching indices
     :param graphs: list of corresponding graphs
     """
-    color_hex = np.array(['#000000', '#6e2c00', '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1', '#ecf0f1', '#f1c40f', '#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
     sphere_mesh = trim.primitives.Sphere(radius=100)
 
     nb_patients = matching_list.shape[0]
     nb_pits = matching_list[0].shape[0]
+
+    pit_col_val = np.arange(0, nb_pits, 1)
+    textures = np.ones(sphere_mesh.vertices.shape[0])*nb_pits
 
     # tri des résultats pour faciliter l'interpretation après
     for p in range(nb_patients):
@@ -107,15 +112,13 @@ def show_sphere(matching_list, graphs):
     trans_pit1 = np.eye(4)
 
     for pit in range(0, nb_pits):
-        color = trim.visual.color.hex_to_rgba(color_hex[pit % color_hex.shape[0]])
         x0 = graphs[0].nodes[pit]['coord'][0]
         y0 = graphs[0].nodes[pit]['coord'][1]
         z0 = graphs[0].nodes[pit]['coord'][2]
         pit0 = trim.primitives.Sphere(radius=1, subdivisions=0)
         trans_pit0[:, 3] = [x0, y0, z0, 1]
         pit0.apply_transform(trans_pit0)
-        pit0.visual.face_colors = color
-
+        textures = np.concatenate((textures, np.ones(pit0.vertices.shape[0]) * pit_col_val[pit]))
         sphere_mesh += pit0
 
         for pat in range(nb_patients):
@@ -126,13 +129,11 @@ def show_sphere(matching_list, graphs):
             pit1 = trim.primitives.Sphere(radius=1, subdivisions=0)
             trans_pit1[:, 3] = [x1, y1, z1, 1]
             pit1.apply_transform(trans_pit1)
-            pit1.visual.face_colors = color
+            textures = np.concatenate((textures, np.ones(pit1.vertices.shape[0]) * pit_col_val[pit]))
 
             sphere_mesh += pit1
-        if pit == color_hex.shape[0] - 1:
-            break
 
-    sphere_mesh.show()
+    splt.pyglet_plot(sphere_mesh, values=textures, color_map='gist_ncar', plot_colormap=True, caption='test')
 
 
 def pits_sphere(graphs):
@@ -142,7 +143,8 @@ def pits_sphere(graphs):
 
     :param graphs: list of pits graphs
     """
-    color_hex = np.array(['#000000', '#6e2c00', '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1', '#ecf0f1', '#f1c40f', '#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
+    color_hex = np.array(['#000000', '#6e2c00', '#7d6608', '#186a3b', '#1b4f72', '#4a235a', '#641e16', '#ecf0f1',
+                          '#ecf0f1', '#f1c40f', '#27ae60', '#48c9b0', '#2980b9', '#cb4335', '#af7ac5', '#a3e4d7', '#fad7a0', '#f2d7d5'])
     sphere_mesh = trim.primitives.Sphere(radius=100)
 
     trans_pit = np.eye(4)
