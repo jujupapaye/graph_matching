@@ -21,10 +21,14 @@ Cette méthode s'appuie sur le critère d'indépendance d'Hilbert Schmidt
 On cherche alors une matrice de permutation P qui permet de passer de K à L qui maximise ce critère.
 Le problème se résume à :
 
+![alt text](readme_image/simple_argmax.png)
+
 Une fois la matrice P trouvée, on a P[i,j] = 1 si Y[i] correspond à X[j] 
 
 Il existe une formule pour ce critère pour plusieurs ensembles, 
-le problème pour plusieurs ensembles revient donc à :
+le problème pour plusieurs ensembles revient donc à maximiser :
+
+![alt text](readme_image/multi.png)
 
 ### Convex Kernelized Sorting
 
@@ -32,6 +36,7 @@ http://www.dabi.temple.edu/~vucetic/documents/djuric12aaai.pdf
 
 Le Convex Kernelized Sorting réecrit le KS en un problème équivalent, plus simple à résoudre :
 
+![alt text](readme_image/convex.png)
 
 Pour l'appariement de 2 objets, c'est ce problème que nous avons résolu.
 
@@ -52,9 +57,8 @@ d'être beaucoup plus longue car dans le pire des cas, on peut se retrouver à e
 des permutations. Cette méthode est utilisable pour des matrices de taille 20*20 maximum.
 
 
-##Implémentation
+## Implémentation
 
-Avant de m'attaquer aux graphes de pits, j'ai d'abord essayer de faire correspondre des images.
 
 Voici comment est organiser ce dépot:
 
@@ -63,11 +67,10 @@ Voici comment est organiser ce dépot:
 gradient et la descente du gradient pour l'appariement de 2 ensembles
 - convex_multi_hsic.py contient les méthodes utiles pour la création des fonctions objectif,
 gradient et la descente du gradient pour l'appariement de plusieurs ensembles
-- matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparer
-- multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple
+- matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparerpuis affiche les résultats sur une sphere
+- multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere
 - show_results_on_sphere.py contient les méthodes utiles à la visualisation des résultats
 
-## Schéma récapitulatif  
 
 ## Requirements
 
