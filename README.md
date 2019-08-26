@@ -5,7 +5,7 @@
 A partir de graphes de pits du cerveau,on cherche à établir des
  correspondances entre les pits de cerveaux de multiples patients 
 (134 dans les données qu'on a). On cherche à faire un appareillage multiple mais partiel
-(tous les pits n'auront pas de correspondances).
+(tous les sommets n'auront pas forcément de correspondances).
 
 ## Théorie
 

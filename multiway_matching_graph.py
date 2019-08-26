@@ -62,7 +62,7 @@ if __name__ == '__main__':
         graph_path = graph_dir + 'full_lh_' + subjects_list[nb_s] + '_pitgraph.gpickle'
         f = open(gram_path, 'rb')
         K = pickle.load(f)
-        if K.shape[0] == 86 and number <= 3:
+        if K.shape[0] == 86 and number <= 10:
             number += 1
             center_K = centered_matrix(K[:, :, subkernel_ind])  # centrage des matrices
             center_K = normalized_matrix(center_K)   # normalisation des données
@@ -96,11 +96,11 @@ if __name__ == '__main__':
     # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
 
     init = perms.copy()
-    perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
+    #perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
 
     t = np.zeros((nb_patients, nb_pits, 2))
     res = np.zeros((nb_patients, nb_pits, nb_pits))
-
+    perms_opt = perms
     for i in range(1, nb_patients):
         res[i], t[i] = transformation_permutation(perms_opt[i])
-    # show_sphere(t, graph_list)
+    show_sphere(t, graph_list)

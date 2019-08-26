@@ -65,11 +65,9 @@ if __name__ == '__main__':
         K = pickle.load(f)
         center_K = centered_matrix(K[:, :, subkernel_ind])  # centrage des données
         K_list.append(center_K)
-        if K.shape[0] == 86:
-            print(len(K_list)-1)
 
-    s0 = input("Entrez le numéro du premier sujet à comparer: (entre 0 et 134)")
-    s1 = input("Entrez le numéro du deuxième sujet à comparer: (entre 0 et 134)")
+    # s0 = input("Entrez le numéro du premier sujet à comparer: (entre 0 et 134)")
+    # s1 = input("Entrez le numéro du deuxième sujet à comparer: (entre 0 et 134)")
 
     K0 = K_list[17]
     K1 = K_list[28]
@@ -91,7 +89,6 @@ if __name__ == '__main__':
     t = transformation_permutation_hungarian(res)
     sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1 pour toutes les lignes
     min_obj, p_min = calcul_fobj(K0, K1, t[0])
-    print("Min(eig)", min_obj)
 
     for i in range(nb_test):
         init = init_random(nb_pits)
@@ -104,7 +101,6 @@ if __name__ == '__main__':
         if obj < min_obj:
             min_obj = obj
             p_min = perm.copy()
-            print("New min :", min_obj)
 
     dir = '/home/jul/Documents/cours/STAGE/CKS/pytorch_graph_pits/data/'
     path0 = 'full_lh_' + subjects_list[17] + '_pitgraph.gpickle'

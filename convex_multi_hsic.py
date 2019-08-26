@@ -1,11 +1,11 @@
-#####################
+"""
 
-# Fonctions utiles pour la minimisation convexe du HSIC pour n ensembles
-#  argmin -HSIC(K0,K1,...KN) + c *contrainte    où contrainte = sommes des lignes/collonnes à 1
-# fonctions de création des fonctions objectif, gradient
-# et estimation des matrices de permutations à partir des n noyaux à comparer
+Fonctions utiles pour la minimisation convexe du HSIC pour n ensembles
+argmin -HSIC(K0,K1,...KN) + c *contrainte    où contrainte = sommes des lignes/collonnes à 1
+fonctions de création des fonctions objectif, gradient
+et estimation des matrices de permutations à partir des n noyaux à comparer
 
-#####################
+"""
 from approximation_transformation import *
 from util import *
 
@@ -16,11 +16,8 @@ def create_objective_function(K, pi, c, ind, res1, res2, res3):
 
     :param K: list of gram matrix to compare
     :param pi: list of permutation (initialisation matrix)
-    :param c: hyperparameter
-    :param ind:
-    :param res1:
-    :param res2:
-    :param res3:
+    :param c: hyperparameter for the constraint
+    :param ind: indice of the pi
     :return: valeur de la fonction objectif pour les paramètres entrés
     """
     assert len(K) == len(pi)
@@ -42,14 +39,11 @@ def create_objective_function(K, pi, c, ind, res1, res2, res3):
 
 def create_gradient_function(ind, K, pi, c, tmp1, tmp2, tmp3):
     """
-    Création de la fonction gradient pour le HSIC multiple
-    :param ind:
+    Création de la fonction gradient pour le HSIC multiple par rapport à pi[ind]
+    :param ind: indice de pi par rapport auquel on calcule le gradient
     :param K: list of gram matrix to compare
     :param pi: list of permutation (initialisation matrix)
-    :param c:
-    :param tmp1:
-    :param tmp2:
-    :param tmp3:
+    :param c: hyperparameter for the constraint
     :return: gradient(HSIC)
     """
     assert len(K) == len(pi)
@@ -75,7 +69,7 @@ def estimate_perms(K, pi, c, mu, mu_min, it, nbtour):
 
     :param K: list of gram matrix to compare
     :param pi: list of permutation (initialisation matrix)
-    :param c: hyperparameter
+    :param c: hyperparameter for the constraint
     :param mu: initial step for the gradient descent
     :param mu_min: minimum step for the gradient descent
     :param it: number of iterations
@@ -104,7 +98,6 @@ def estimate_perms(K, pi, c, mu, mu_min, it, nbtour):
                     tmp3 = tmp3 * (pi[j] @ K[j] @ pi[j].T @ UN)
             objective = create_objective_function(K, pi, c, indice, res1, res2, res3)
             gradient = create_gradient_function(indice, K, pi, c, tmp1, tmp2, tmp3)
-            gradient = normalized_matrix(gradient)
             pi[indice], mu_est = cvm.monotone_fista_support(objective, gradient, pi[indice], mu, mu_min, it, neg_projector)
             indice = (indice+1) % len(K)
     return pi
