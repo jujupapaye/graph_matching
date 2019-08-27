@@ -4,7 +4,7 @@
 
 A partir de graphes de pits du cerveau,on cherche à établir des
  correspondances entre les pits de cerveaux de multiples patients 
-(134 dans les données qu'on a). On cherche à faire un appareillage multiple mais partiel
+(134 dans nos données). On cherche à faire un appareillage multiple mais partiel
 (tous les sommets n'auront pas forcément de correspondances).
 
 ## Théorie
@@ -14,11 +14,12 @@ A partir de graphes de pits du cerveau,on cherche à établir des
 https://papers.nips.cc/paper/3608-kernelized-sorting
 
 Le Kernelized Sorting permet l'appariement de 2 objets (ou plus) de types 
-différent n'ayant pas forcément la même structure. 
+différents n'ayant pas forcément la même structure. 
 Cette méthode s'appuie sur le critère d'indépendance d'Hilbert Schmidt 
 (HSIC) qui permet de mesurer la dépendance entre 2 sets de données X et Y de taille égale
- à m qui seront représenter par leur matrice noyau K et L. 
-On cherche alors une matrice de permutation P qui permet de passer de K à L qui maximise ce critère.
+ à m qui seront représentés par leurs matrices noyaux K et L. 
+On cherche alors une matrice de permutation P qui permet de passer de K à L 
+qui maximise ce critère.
 Le problème se résume à :
 
 ![alt text](readme_image/simple_argmax.png)
@@ -26,9 +27,11 @@ Le problème se résume à :
 Une fois la matrice P trouvée, on a P[i,j] = 1 si Y[i] correspond à X[j] 
 
 Il existe une formule pour ce critère pour plusieurs ensembles, 
-le problème pour plusieurs ensembles revient donc à maximiser :
+le problème revient à maximiser :
 
 ![alt text](readme_image/multi.png)
+
+On minimisera donc son inverse.
 
 ### Convex Kernelized Sorting
 
@@ -38,7 +41,7 @@ Le Convex Kernelized Sorting réecrit le KS en un problème équivalent, plus si
 
 ![alt text](readme_image/convex.png)
 
-Pour l'appariement de 2 objets, c'est ce problème que nous avons résolu.
+Pour l'appariement de 2 objets, nous avons résolu ce problème.
 
 ### Descente du gradient 
 
@@ -60,7 +63,7 @@ des permutations. Cette méthode est utilisable pour des matrices de taille 20*2
 ## Implémentation
 
 
-Voici comment est organiser ce dépot:
+Voici comment est organisé ce dépôt:
 
 - convexminimization2.py contient les méthodes utilisées pour la descente du gradient
 - convex_simple_hsic.py contient les méthodes utiles pour la création des fonctions objectif,
