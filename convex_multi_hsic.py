@@ -8,6 +8,8 @@ et estimation des matrices de permutations à partir des n noyaux à comparer
 """
 from approximation_transformation import *
 from util import *
+import convexminimization2 as cvm
+from projector import *
 
 
 def create_objective_function(K, pi, c, ind, res1, res2, res3):
