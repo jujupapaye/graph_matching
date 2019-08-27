@@ -99,11 +99,11 @@ if __name__ == '__main__':
                 K1[i, j] = k1[i, j]
 
     # parameters for gradient descent
-    mu = 2
+    mu = 1
     mu_min = 1e-8
     it = 1500
     c = 1
-    nb_test = 10
+    nb_test = 1000
 
     print("Paramètre mu/mu_min/it/c/nb_test:", mu, mu_min, it, c, nb_test)
 

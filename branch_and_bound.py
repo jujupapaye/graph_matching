@@ -11,13 +11,14 @@ import convex_simple_hsic as hsic
 import approximation_transformation as transfo
 import projector as proj
 import convexminimization2 as cvm
+from numba import jiit
 
 
 # calcule la borne inférieur
 def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
     objective = hsic.create_objective_function(K, L, init, c)
     gradient = hsic.create_gradient_function(K, L, init, c)
-    projector = hsic.create_projector_neg_and_fixed(constraint)
+    projector = proj.create_projector_neg_and_fixed(constraint)
     res, mu = cvm.monotone_fista_support(objective, gradient, init, mu, mu_min, it, projector)
     filtre = proj.creation_filtre(constraint, K.shape[0])
     i0, j0 = np.unravel_index(np.argmax(res*filtre, axis=None), res.shape)  # i0,j0 les indices de l'élément max sans les valeurs fixées
@@ -39,6 +40,7 @@ def choose_next_contraint(act_constraint, lowers):
 
 
 # algorithme du branch and bound pour l'appariement de 2 ensembles
+@jiit(nopython=True)
 def branch_and_bound(K1, K2, init, c, mu, mu_min, it):
     n = K1.shape[0]
     lowers = list()   # list of lowers bounds

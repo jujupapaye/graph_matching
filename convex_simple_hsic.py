@@ -1,10 +1,10 @@
-#####################
+"""
 
-# Les fonctions utiles pour la minimisation convexe du HSIC pour 2 ensembles
-#  argmin ||K @ X-X.T @ L.T||^2 + c *contrainte    où contrainte = sommes des lignes/colonnes à 1
-# fonctions de création des fonctions objectif, gradient + estimation d'une permutation à partir de 2 noyaux à comparer
+ Les fonctions utiles pour la minimisation convexe du HSIC pour 2 ensembles
+  argmin ||K @ X-X.T @ L.T||^2 + c *contrainte    où contrainte = sommes des lignes/colonnes à 1
+ fonctions de création des fonctions objectif, gradient + estimation d'une permutation à partir de 2 matrices noyaux à comparer
 
-#####################
+"""
 
 import numpy as np
 import convexminimization2 as cvm
