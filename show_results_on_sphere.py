@@ -51,7 +51,7 @@ def show_sphere_for_2(matching, g0, g1):
     (using trimesh/ slam)
 
     Parameters :
-    -matching : array of sorted indices where the node number matching[i] of g0 correspond to the i node of g1
+    -matching : array where the node number matching[i] of g0 correspond to the i node of g1
     -g0, g1: graphs to match
 
     """
@@ -61,30 +61,37 @@ def show_sphere_for_2(matching, g0, g1):
     transfo_pit0 = np.eye(4)
     transfo_pit1 = np.eye(4)
     pairs_nb = 0
+    nb_pits = matching.shape[0]
+
+    pit_col_val = np.arange(0, nb_pits, 1)
+    textures = np.ones(sphere_mesh.vertices.shape[0]) * nb_pits
+
     for node in range(0, matching.shape[0]):
         pairs_nb += 1
         color = trim.visual.color.hex_to_rgba(color_hex[node % color_hex.shape[0]])
 
-        x0 = g0.nodes[matching[node]]['coord'][0]
-        y0 = g0.nodes[matching[node]]['coord'][1]
-        z0 = g0.nodes[matching[node]]['coord'][2]
-        pit0 = trim.primitives.Sphere(radius=1, subdivisions=0)
-        transfo_pit0[:, 3] = [x0, y0, z0, 1]
-        pit0.apply_transform(transfo_pit0)
-        pit0.visual.face_colors = color
+        if g0.has_node(matching[node]) and g1.has_node(node):  # si les noeuds matchés existe bien dans les 2 graphes
+            x0 = g0.nodes[matching[node]]['coord'][0]
+            y0 = g0.nodes[matching[node]]['coord'][1]
+            z0 = g0.nodes[matching[node]]['coord'][2]
+            pit0 = trim.primitives.Sphere(radius=1, subdivisions=0)
+            transfo_pit0[:, 3] = [x0, y0, z0, 1]
+            pit0.apply_transform(transfo_pit0)
+            pit0.visual.face_colors = color
+            textures = np.concatenate((textures, np.ones(pit0.vertices.shape[0]) * pit_col_val[node]))
 
-        x1 = g1.nodes[node]['coord'][0]
-        y1 = g1.nodes[node]['coord'][1]
-        z1 = g1.nodes[node]['coord'][2]
-        pit1 = trim.primitives.Sphere(radius=1, subdivisions=0)
-        transfo_pit1[:, 3] = [x1, y1, z1, 1]
-        pit1.apply_transform(transfo_pit1)
-        pit1.visual.face_colors = color
+            x1 = g1.nodes[node]['coord'][0]
+            y1 = g1.nodes[node]['coord'][1]
+            z1 = g1.nodes[node]['coord'][2]
+            pit1 = trim.primitives.Sphere(radius=1, subdivisions=0)
+            transfo_pit1[:, 3] = [x1, y1, z1, 1]
+            pit1.apply_transform(transfo_pit1)
+            pit1.visual.face_colors = color
+            textures = np.concatenate((textures, np.ones(pit1.vertices.shape[0]) * pit_col_val[node]))
 
-        sphere_mesh = sphere_mesh + pit0 + pit1
-        if pairs_nb % color_hex.shape[0] == 0:
-            sphere_mesh.show()
-            sphere_mesh = trim.primitives.Sphere(radius=100)
+            sphere_mesh = sphere_mesh + pit0 + pit1
+
+    splt.pyglet_plot(sphere_mesh, values=textures, color_map='gist_ncar', plot_colormap=True)
 
 
 def show_sphere(matching_list, graphs):

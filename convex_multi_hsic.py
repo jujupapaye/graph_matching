@@ -6,10 +6,9 @@ fonctions de création des fonctions objectif, gradient
 et estimation des matrices de permutations à partir des n noyaux à comparer
 
 """
-from approximation_transformation import *
-from util import *
 import convexminimization2 as cvm
-from projector import *
+import projector as proj
+import numpy as np
 
 
 def create_objective_function(K, pi, c, ind, res1, res2, res3):
@@ -100,6 +99,6 @@ def estimate_perms(K, pi, c, mu, mu_min, it, nbtour):
                     tmp3 = tmp3 * (pi[j] @ K[j] @ pi[j].T @ UN)
             objective = create_objective_function(K, pi, c, indice, res1, res2, res3)
             gradient = create_gradient_function(indice, K, pi, c, tmp1, tmp2, tmp3)
-            pi[indice], mu_est = cvm.monotone_fista_support(objective, gradient, pi[indice], mu, mu_min, it, neg_projector)
+            pi[indice], mu_est = cvm.monotone_fista_support(objective, gradient, pi[indice], mu, mu_min, it, proj.neg_projector)
             indice = (indice+1) % len(K)
     return pi

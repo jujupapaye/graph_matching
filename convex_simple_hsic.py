@@ -7,9 +7,8 @@
 #####################
 
 import numpy as np
-from approximation_transformation import *
 import convexminimization2 as cvm
-from projector import  *
+import projector as proj
 
 
 def create_objective_function(K, L, pi, c):
@@ -65,5 +64,5 @@ def estimate_perm(K, L, init, c, mu, mu_min, it):
     """
     objective = create_objective_function(K, L, init, c)
     gradient = create_gradient_function(K, L, init, c)
-    pi, mu_est = cvm.monotone_fista_support(objective, gradient, init, mu, mu_min, it, neg_projector)
+    pi, mu_est = cvm.monotone_fista_support(objective, gradient, init, mu, mu_min, it, proj.neg_projector)
     return pi

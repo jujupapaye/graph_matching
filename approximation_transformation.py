@@ -6,7 +6,7 @@
 """
 
 import numpy as np
-from munkres import *
+import munkres
 
 
 def transformation_permutation(p):
@@ -40,7 +40,7 @@ def transformation_permutation_hungarian(p):
     transformation d'une matrice p rempli de valeurs entre 0 et 1
     en une matrice de permutation grace à l'algorithme hongrois
     """
-    m = Munkres()
+    m = munkres.Munkres()
     new = -1*p
     indexes = m.compute(new)
     res = np.zeros((p.shape[0], p.shape[0]))

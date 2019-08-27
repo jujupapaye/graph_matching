@@ -4,10 +4,12 @@ Tests du matching de plusieurs graphes de pits
 
 import os.path as op
 import pickle
-from convex_multi_hsic import *
+import convex_multi_hsic as multihsic
 import networkx as nx
-from show_results_on_sphere import *
-from util import *
+import show_results_on_sphere as sh
+import util
+import numpy as np
+import approximation_transformation as transfo
 
 if __name__ == '__main__':
     # parameters
@@ -64,8 +66,8 @@ if __name__ == '__main__':
         K = pickle.load(f)
         if K.shape[0] == 86 and number <= 3:
             number += 1
-            center_K = centered_matrix(K[:, :, subkernel_ind])  # centrage des matrices
-            center_K = normalized_matrix(center_K)   # normalisation des données
+            center_K = util.centered_matrix(K[:, :, subkernel_ind])  # centrage des matrices
+            center_K = util.normalized_matrix(center_K)   # normalisation des données
             K_list.append(center_K)
             G = nx.read_gpickle(graph_path)
             graph_list.append(G)
@@ -88,19 +90,19 @@ if __name__ == '__main__':
     perms[0] = np.eye(nb_pits)
 
     for p in range(1, len(perms)):
-        perms[p] = init_eig(K_list[0], K_list[p], nb_pits)
+        perms[p] = util.init_eig(K_list[0], K_list[p], nb_pits)
         # perms[p] = init_random(nb_pits)   # initialisation des permutations
 
     # parameters of the gradient descent
-    c, mu, mu_min, it, nb_tour = 1e12, 1e-3, 1e-20, 1000, 3    # (params pour 3 patients)
+    c, mu, mu_min, it, nb_tour = 1, 1e-18, 1e-18, 500, 3    # (params pour 3 patients)
     # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
 
     init = perms.copy()
-    perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
+    perms_opt = multihsic.estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
 
     t = np.zeros((nb_patients, nb_pits, 2))
     res = np.zeros((nb_patients, nb_pits, nb_pits))
-    perms_opt = perms
+    # perms_opt = perms
     for i in range(1, nb_patients):
-        res[i], t[i] = transformation_permutation(perms_opt[i])
-    show_sphere(t, graph_list)
+        res[i], t[i] = transfo.transformation_permutation(perms_opt[i])
+    sh.show_sphere(t, graph_list)

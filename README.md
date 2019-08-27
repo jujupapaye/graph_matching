@@ -52,6 +52,8 @@ Le projection met les valeurs de la matrice de permutation à 0 si ses valeurs s
 
 ### Branch and bound
 
+https://hal.inria.fr/hal-00881407/file/PermutationIcassp.pdf
+
 Le problème de le descente du gradient est qu'on peut facilement tomber sur des optima locaux 
 et non sur la solution. On trouve des résultats différents selon l'initialisation...
 
@@ -72,6 +74,7 @@ gradient et la descente du gradient pour l'appariement de 2 ensembles
 gradient et la descente du gradient pour l'appariement de plusieurs ensembles
 - matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparerpuis affiche les résultats sur une sphere
 - multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere
+- matching_on_pt_of_interests.py 
 - show_results_on_sphere.py contient les méthodes utiles à la visualisation des résultats
 
 
