@@ -1,9 +1,9 @@
-######################
+"""
 
-# Fonctions qui transforme une matrice p
-# en matrice de permutation de différentes manières
+ Fonctions qui transforme une matrice p avec des coefficients entre 0 et 1
+ en matrice de permutation de différentes manières
 
-######################
+"""
 
 import numpy as np
 from munkres import *

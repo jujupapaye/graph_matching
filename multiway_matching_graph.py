@@ -62,7 +62,7 @@ if __name__ == '__main__':
         graph_path = graph_dir + 'full_lh_' + subjects_list[nb_s] + '_pitgraph.gpickle'
         f = open(gram_path, 'rb')
         K = pickle.load(f)
-        if K.shape[0] == 86 and number <= 10:
+        if K.shape[0] == 86 and number <= 3:
             number += 1
             center_K = centered_matrix(K[:, :, subkernel_ind])  # centrage des matrices
             center_K = normalized_matrix(center_K)   # normalisation des données
@@ -92,11 +92,11 @@ if __name__ == '__main__':
         # perms[p] = init_random(nb_pits)   # initialisation des permutations
 
     # parameters of the gradient descent
-    c, mu, mu_min, it, nb_tour = 1e12, 1e-3, 1e-20, 500, 3    # (params pour 3 patients)
+    c, mu, mu_min, it, nb_tour = 1e12, 1e-3, 1e-20, 1000, 3    # (params pour 3 patients)
     # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
 
     init = perms.copy()
-    #perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
+    perms_opt = estimate_perms(K_list, perms, c, mu, mu_min, it, nb_tour)
 
     t = np.zeros((nb_patients, nb_pits, 2))
     res = np.zeros((nb_patients, nb_pits, nb_pits))
