@@ -59,7 +59,7 @@ et non sur la solution. On trouve des résultats différents selon l'initialisat
 
 Le branch and bound est une méthode qui nous permet de trouver une solution optimale, mais qui a le défaut 
 d'être beaucoup plus longue car dans le pire des cas, on peut se retrouver à explorer l'ensemble
-des permutations. Cette méthode est utilisable pour des matrices de taille 20*20 maximum.
+des permutations.
 
 
 ## Implémentation
@@ -75,8 +75,9 @@ gradient et la descente du gradient pour l'appariement de plusieurs ensembles
 - matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparerpuis affiche les résultats sur une sphere
 - multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere
 - matching_on_pt_of_interests.py 
+- matching_2_graph_on_pt_on_interest.py 
 - show_results_on_sphere.py contient les méthodes utiles à la visualisation des résultats
-
+- branch_and_bound.py contient les méthodes utiles pour l'algorithme du branch and bound
 
 ## Requirements
 
