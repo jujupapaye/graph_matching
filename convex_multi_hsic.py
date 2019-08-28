@@ -75,14 +75,14 @@ def estimate_perms(K, pi, c, mu, mu_min, it, nbtour):
     :param mu_min: minimum step for the gradient descent
     :param it: number of iterations
     :param nbtour: number of tours that we do
-    :return:
+    :return: pi optimal
     """
     indice = 1
     n = K[0].shape[0]
     pi[0] = np.eye(n)  # la première permutation sera toujours l'identité (on compare un ensemble avec lui même)
     UN = np.ones((n, 1))
     for i in range(1, n*nbtour):
-        if i != 0:
+        if i % nbtour != 0:
             res1 = np.ones((n, n))
             res2 = np.ones((1, 1))
             res3 = np.ones((n, 1))

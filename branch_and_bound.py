@@ -1,6 +1,6 @@
 """
 
- Algo branch and bround pour la comparaison de 2 ensemble de 20 images de cifar 100
+ Algo branch and bround pour la comparaison de 2 ensemble
  (changer les fonctions objectif/gradient dans le calcul de la lower bounds
  pour changer l'utilité de l'algo)
 
@@ -11,11 +11,22 @@ import convex_simple_hsic as hsic
 import approximation_transformation as transfo
 import projector as proj
 import convexminimization2 as cvm
-from numba import jiit
+from numba import jit
 
 
-# calcule la borne inférieur
 def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
+    """
+    Estime la borne inférieur
+    :param K:
+    :param L:
+    :param init:
+    :param c:
+    :param mu:
+    :param mu_min:
+    :param it:
+    :param constraint:
+    :return:
+    """
     objective = hsic.create_objective_function(K, L, init, c)
     gradient = hsic.create_gradient_function(K, L, init, c)
     projector = proj.create_projector_neg_and_fixed(constraint)
@@ -25,23 +36,45 @@ def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
     return res, objective(res), i0, j0
 
 
-# calcule la borne supérieur
 def compute_upper_bound(res_lower, c, K, L):
+    """
+    Calcule la borne inférieur
+    :param res_lower:
+    :param c:
+    :param K:
+    :param L:
+    :return:
+    """
     p = transfo.transformation_permutation_hungarian(res_lower)[0]
     UN = np.ones((p.shape[0], 1))
     constraints = np.linalg.norm(p @ UN - UN)**2 + np.linalg.norm(p.T @ UN - UN)**2
     return np.linalg.norm(K @ p.T - p.T @ L.T)**2 + c*constraints
 
 
-# heuristique pour choisir la prochaine contrainte à choisir
 def choose_next_contraint(act_constraint, lowers):
-    minimum = np.argmin(lowers)
+    """
+    Heuristique pour choisir la prochaine contrainte à choisir
+    :param act_constraint: liste des contraintes actives
+    :param lowers: liste de leurs bornes inférieurs associés
+    :return:
+    """
+    minimum = np.argmin(lowers)  # choix de la contrainte ayant la plus petite borne inf
     return act_constraint[minimum], minimum
 
 
-# algorithme du branch and bound pour l'appariement de 2 ensembles
-@jiit(nopython=True)
+@jit
 def branch_and_bound(K1, K2, init, c, mu, mu_min, it):
+    """
+    Algorithme du branch and bound pour l'appariement de 2 ensembles
+    :param K1: matrice de gram du premier ensemble à comparer
+    :param K2: matrice de gram du second ensemble à comparer
+    :param init: matrice d'initialisation
+    :param c: hyperparamètre
+    :param mu:
+    :param mu_min:
+    :param it: nombre d'itération pour trouver la lower bound
+    :return:
+    """
     n = K1.shape[0]
     lowers = list()   # list of lowers bounds
     uppers = list()   # list of uppers bounds

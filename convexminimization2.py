@@ -83,9 +83,6 @@ def monotone_fista_support(fobj, fgrad, beta, mu, mu_min, iterations, projector)
         grad = fgrad(yk)
         yval = fobj(yk)
         fval = qval + 1.0
-        # print("it", i)
-        # print("yval", yval)
-        # print("grad", grad)
 
         # Backtrack search for alpha
         mu_step *= 2.0
@@ -115,6 +112,6 @@ def monotone_fista_support(fobj, fgrad, beta, mu, mu_min, iterations, projector)
 
         yk = xk + old_tk / tk * (zk - xk) + (old_tk - 1.0) / tk * (xk - old_xk)
         old_xk = np.copy(xk)
-    # plt.scatter(range(len(yplot)),yplot,s=1)
+    # plt.scatter(range(len(yplot)), yplot, s=1)
     # plt.show()
     return xk, mu_step
