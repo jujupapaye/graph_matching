@@ -11,21 +11,21 @@ import convex_simple_hsic as hsic
 import approximation_transformation as transfo
 import projector as proj
 import convexminimization2 as cvm
-from numba import jit
+# from numba import jit
 
 
 def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
     """
     Estime la borne inférieur
-    :param K:
-    :param L:
-    :param init:
-    :param c:
-    :param mu:
-    :param mu_min:
-    :param it:
-    :param constraint:
-    :return:
+    :param K: premiere matrice de gram
+    :param L: seconde matrice de gram
+    :param init: initialisation pour la descente du gradient pour l'estimation de la borne inf
+    :param c: hyperparamètre pour la descente du gradient pour l'estimation de la borne inf
+    :param mu: mu pour la descente du gradient pour l'estimation de la borne inf
+    :param mu_min: mu_min pour la descente du gradient pour l'estimation de la borne inf
+    :param it: nombre d'iterations dans la descente du gradient pour l'estimation de la borne inf
+    :param constraint: les contraintes fixés qu'on ne peut pas toucher
+    :return: estimation de la borne inférieur avec ses contraintes
     """
     objective = hsic.create_objective_function(K, L, init, c)
     gradient = hsic.create_gradient_function(K, L, init, c)
@@ -56,24 +56,24 @@ def choose_next_contraint(act_constraint, lowers):
     Heuristique pour choisir la prochaine contrainte à choisir
     :param act_constraint: liste des contraintes actives
     :param lowers: liste de leurs bornes inférieurs associés
-    :return:
+    :return: contrainte à choisir, sa borne inférieur
     """
     minimum = np.argmin(lowers)  # choix de la contrainte ayant la plus petite borne inf
     return act_constraint[minimum], minimum
 
 
-@jit
+# @jit
 def branch_and_bound(K1, K2, init, c, mu, mu_min, it):
     """
-    Algorithme du branch and bound pour l'appariement de 2 ensembles
+    Algorithme du branch and bound pour l'appariement de 2 ensembles (min || ||+c*contraintes)
     :param K1: matrice de gram du premier ensemble à comparer
     :param K2: matrice de gram du second ensemble à comparer
     :param init: matrice d'initialisation
-    :param c: hyperparamètre
-    :param mu:
-    :param mu_min:
+    :param c: hyperparamètre pour la borne inf (minimisation convexe)
+    :param mu: mu pour la borne inf (minimisation convexe)
+    :param mu_min: mu_min pour la borne inf (minimisation convexe)
     :param it: nombre d'itération pour trouver la lower bound
-    :return:
+    :return: une liste d'une seule contrainte (la seule restante) qui est la solution optimale
     """
     n = K1.shape[0]
     lowers = list()   # list of lowers bounds
@@ -90,7 +90,7 @@ def branch_and_bound(K1, K2, init, c, mu, mu_min, it):
         uppers.append(u)
     L = min(lowers)  # initialisation of L and U
     U = min(uppers)
-    while L != U or len(active_constraints[0]) != n:
+    while L != U or len(active_constraints) != 1:
         chosen_constraint, ind = choose_next_contraint(active_constraints, lowers)  # choix de la contrainte avec la + petite borne inférieur
         nb_cons += 1
         p, l, i0, j0 = compute_lower_bound(K1, K2, init.copy(), c, mu, mu_min, it, chosen_constraint)
@@ -122,4 +122,4 @@ def branch_and_bound(K1, K2, init, c, mu, mu_min, it):
                 del uppers[j]
             j = j-1
     print("Nombres de contraintes (chemins) étudiées :", nb_cons, "/", np.math.factorial(n))
-    return active_constraints, lowers, uppers
+    return active_constraints
