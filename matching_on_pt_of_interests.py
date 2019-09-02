@@ -70,7 +70,7 @@ if __name__ == '__main__':
     perms[0] = np.eye(nb_pits)
 
     # parameters of the gradient descent
-    c, mu, mu_min, it, nb_tests = 1, 1, 1e-8, 1500, 300  # params pour 25 graphes de taille 11
+    c, mu, mu_min, it, nb_tests = 1, 1, 1e-3, 1000, 100  # params pour 25 graphes de taille 11
     # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
 
     init = perms.copy()
@@ -96,5 +96,6 @@ if __name__ == '__main__':
 
     for i in range(1, nb_graphs):
         res[i], match[i] = transfo.transformation_permutation_hungarian(perms_opt[i])  # transformation du résultat en matrices de permutations
+    print("Geodesis metric : ", sh.metric_geodesic(match, new_graph_list))
     sh.show_sphere(match, new_graph_list)
 
