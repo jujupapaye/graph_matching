@@ -7,18 +7,14 @@ import approximation_transformation as transfo
 import load_graph_and_kernel as load_data
 
 
-def calcul_fobj(K0, K1, p):
-    return np.linalg.norm(K0 @ p.T - p.T @ K1.T) ** 2, p.copy()
-
-
 if __name__ == '__main__':
-    K_list, graph_list = load_data.load_graph_and_kernels(5)
+    K_list, graph_list = load_data.load_graph_and_kernels(3)  # noyau coordonnées
 
     for i in range(len(K_list)):
         K_list[i] = util.centered_matrix(K_list[i])
         K_list[i] = util.normalized_matrix(K_list[i])
 
-    interet = 1   # choix du point d'interet où on regarde les pits
+    interet = 2   # choix du point d'interet où on regarde les pits
 
     if interet == 1:
         pt_interest = [-43, 6, 89]
@@ -70,7 +66,7 @@ if __name__ == '__main__':
     perms[0] = np.eye(nb_pits)
 
     # parameters of the gradient descent
-    c, mu, mu_min, it, nb_tests = 1, 1, 1e-3, 1000, 100  # params pour 25 graphes de taille 11
+    c, mu, mu_min, it, nb_tests = 1, 1, 1e-4, 800, 200  # pt d'interet 2
     # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
 
     init = perms.copy()
@@ -81,12 +77,12 @@ if __name__ == '__main__':
         init = util.init_eig(new_K_list[0], new_K_list[i], nb_pits)
         perm = hsic.estimate_perm(new_K_list[0], new_K_list[i], init, c, mu, mu_min, it)
         t = transfo.transformation_permutation_hungarian(perm)
-        min, perms_opt[i] = calcul_fobj(new_K_list[0], new_K_list[i], t[0])
+        min, perms_opt[i] = hsic.calcul_fobj(new_K_list[0], new_K_list[i], t[0])
         for t in range(nb_tests):
             init = util.init_random(nb_pits)
             perm = hsic.estimate_perm(new_K_list[0], new_K_list[i], init, c, mu, mu_min, it)
             t = transfo.transformation_permutation_hungarian(perm)
-            obj = calcul_fobj(new_K_list[0], new_K_list[i], t[0])[0]
+            obj = hsic.calcul_fobj(new_K_list[0], new_K_list[i], t[0])[0]
             if obj < min:
                 perms_opt[i] = t[0].copy()
                 min = obj

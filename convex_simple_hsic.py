@@ -66,3 +66,14 @@ def estimate_perm(K, L, init, c, mu, mu_min, it):
     gradient = create_gradient_function(K, L, init, c)
     pi, mu_est = cvm.monotone_fista_support(objective, gradient, init, mu, mu_min, it, proj.neg_projector)
     return pi
+
+
+def calcul_fobj(K0, K1, p):
+    """
+    Calcule HSIC(K0,K1) = ||K0 @ p-p.T @ K1.T||^2
+    :param K0: matrice de Gram du premier ensemble à comparer
+    :param K1: matrice de Gram du second ensemble à comparer
+    :param p: matrice de permutation
+    :return:
+    """
+    return np.linalg.norm(K0 @ p.T - p.T @ K1.T) ** 2, p.copy()
