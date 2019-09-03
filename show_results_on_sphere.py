@@ -7,7 +7,7 @@ import util
 
 def metric_geodesic(match, graphs):
     """
-    Calcule le somme des distances géodésiques d entre chaque points matchés entre eux
+    Calcule la moyenne des distances géodésiques entre chaque points matchés entre eux
     :param match: list des matching
     :param graphs: list de graphes matchés
     :return: d
@@ -18,15 +18,17 @@ def metric_geodesic(match, graphs):
         match[p] = match[p][np.argsort(match[p][:, 1])]
 
     d = 0
+    nb_pair = 0
     for m in range(1, len(match)):
         for i in range(len(match[m])):
             p1 = i
             p2 = match[m, i, 0]
             if graphs[0].has_node(p1) and graphs[m].has_node(p2):
+                nb_pair += 1
                 xA, yA, zA = graphs[0].node[p1]['coord']
                 xB, yB, zB = graphs[m].node[p2]['coord']
                 d += util.dist_on_sphere(100, xA, yA, zA, xB, yB, zB)
-    return d
+    return d / nb_pair
 
 
 def show_sphere_for_2(matching, g0, g1):
@@ -96,7 +98,7 @@ def show_sphere(matching_list, graphs):
     for p in range(nb_graphs):
         matching_list[p] = matching_list[p][np.argsort(matching_list[p][:, 1])]
 
-    trans_pit0 = np.eye(4)
+    trans_pit0 = np.eye(4) #interet = 1
     trans_pit1 = np.eye(4)
 
     for pit in range(0, nb_pits):
