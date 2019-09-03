@@ -13,12 +13,12 @@ import projector as proj
 
 def create_objective_function(K, L, pi, c):
     """
-
+    Create objectif function ||K @ pi-pi.T @ L.T||^2 + c *contrainte
     :param K: gram matrix of the first set to compare
     :param L: gram matrix of the second set to compare
     :param pi: permutation to find
     :param c: hyperparameter
-    :return:
+    :return: objectif function
     """
     def objective_function(beta):
         n = K.shape[0]
@@ -31,7 +31,7 @@ def create_objective_function(K, L, pi, c):
 
 def create_gradient_function(K, L, pi, c):
     """
-
+    Create gradient function
     :param K: gram matrix of the first set to compare
     :param L: gram matrix of the second set to compare
     :param pi: permutation to find
@@ -46,13 +46,9 @@ def create_gradient_function(K, L, pi, c):
     return gradient_function
 
 
-# estime une permutation p pour comparer 2 objets (convex kernelized sorting)
-# avec K et L matrices noyaux centrés des ensembles à comparer
-# init la matrice d'initialisation de la descente du gradient, c l'hyperparamètre qui impose le poids des contraintes,
-# it le nombre d'itérations à faire pour la descente
 def estimate_perm(K, L, init, c, mu, mu_min, it):
     """
-
+    Estime une matrice stochastique  p pour comparer 2 ensembles X1 et X2 à partir de leurs matrices de Gram K et L
     :param K: gram matrix of the first set to compare
     :param L: gram matrix of the second set to compare
     :param init: initialisation matrix
@@ -60,7 +56,7 @@ def estimate_perm(K, L, init, c, mu, mu_min, it):
     :param mu: initial step for the gradient descent
     :param mu_min: minimum step for the gradient descent
     :param it: number of iterations
-    :return:
+    :return: p (biochastic matrix)
     """
     objective = create_objective_function(K, L, init, c)
     gradient = create_gradient_function(K, L, init, c)
