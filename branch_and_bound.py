@@ -11,7 +11,7 @@ import convex_simple_hsic as hsic
 import approximation_transformation as transfo
 import projector as proj
 import convexminimization2 as cvm
-# from numba import jit
+from numba import jit
 
 
 def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
@@ -39,11 +39,11 @@ def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
 def compute_upper_bound(res_lower, c, K, L):
     """
     Calcule la borne inférieur
-    :param res_lower:
-    :param c:
-    :param K:
-    :param L:
-    :return:
+    :param res_lower: matrice stochastique (comportant réels entre 0 et 1 et somme colonne/ligne à 1)
+    :param c: hyperparametre
+    :param K: matrice de Gram
+    :param L: matrice de Gram
+    :return: borne inférieur
     """
     p = transfo.transformation_permutation_hungarian(res_lower)[0]
     UN = np.ones((p.shape[0], 1))
@@ -62,7 +62,7 @@ def choose_next_contraint(act_constraint, lowers):
     return act_constraint[minimum], minimum
 
 
-# @jit
+@jit(parallel=True)
 def branch_and_bound(K1, K2, init, c, mu, mu_min, it):
     """
     Algorithme du branch and bound pour l'appariement de 2 ensembles (min || ||+c*contraintes)
