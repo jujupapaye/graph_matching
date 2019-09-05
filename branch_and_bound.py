@@ -62,7 +62,7 @@ def choose_next_contraint(act_constraint, lowers):
     return act_constraint[minimum], minimum
 
 
-@jit(parallel=True)
+# @jit(parallel=True)
 def branch_and_bound(K1, K2, init, c, mu, mu_min, it):
     """
     Algorithme du branch and bound pour l'appariement de 2 ensembles (min || ||+c*contraintes)
