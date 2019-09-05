@@ -5,16 +5,19 @@ import util
 import numpy as np
 import approximation_transformation as transfo
 import load_graph_and_kernel as load_data
+import metric
 
 
 if __name__ == '__main__':
-    K_list, graph_list = load_data.load_graph_and_kernels(3)  # noyau coordonnées
+    noyau = 5   # à changer selon le noyau qu'on veut
+    noyaux = ["structure + coordonnées + profondeur", "coordonnées + profondeur ", "structure + profondeur", "structure + coordonnées", "stucture", "coordonnées", "profondeur"]
+    K_list, graph_list = load_data.load_graph_and_kernels(noyau)  # noyau coordonnées
 
     for i in range(len(K_list)):
-        K_list[i] = util.centered_matrix(K_list[i])
         K_list[i] = util.normalized_matrix(K_list[i])
+        K_list[i] = util.centered_matrix(K_list[i])
 
-    interet = 2   # choix du point d'interet où on regarde les pits
+    interet = 1   # choix du point d'interet où on regarde les pits
 
     if interet == 1:
         pt_interest = [-43, 6, 89]
@@ -43,17 +46,27 @@ if __name__ == '__main__':
             graph_list[k].remove_node(node)
 
     pits_max = K_list[0].shape[0]
+    indice_pit_max = 0
     for k in range(len(K_list)):    # trouver le nombre de pits maximum
         if K_list[k].shape[0] > pits_max:
             pits_max = K_list[k].shape[0]
+            indice_pit_max = k
 
     nb_pits = pits_max
     nb_graphs = len(K_list)
 
+    # on met en premier un graphe qui a le nombre de pit max pour le comparer avec tous les autres
+    tmp = K_list[indice_pit_max].copy()
+    K_list[indice_pit_max] = K_list[0].copy()
+    K_list[0] = tmp
+    graph_tmp = graph_list[indice_pit_max].copy()
+    graph_list[indice_pit_max] = graph_list[0].copy()
+    graph_list[0] = graph_tmp
+
     new_K_list = np.zeros((nb_graphs, nb_pits, nb_pits))
     new_graph_list = list()
 
-    # ajout des pits fictif pour que toute les matrices de gram fassent la même taille pits_max
+    # ajout des pits fictifs pour que toutes les matrices de gram fassent la même taille (pits_max)
     for i in range(nb_graphs):
         new_K_list[i] = np.eye(nb_pits)
         for j in range(K_list[i].shape[0]):
@@ -66,8 +79,10 @@ if __name__ == '__main__':
     perms[0] = np.eye(nb_pits)
 
     # parameters of the gradient descent
-    c, mu, mu_min, it, nb_tests = 1, 1, 1e-4, 800, 200  # pt d'interet 2
-    # c, mu, mu_min, it, nb_tour = 1, 1e-10, 1e-30, 500, 3
+    c, mu, mu_min, it, nb_tests = 1, 1, 1e-5, 500, 300  # pt d'interet 2
+    print("Comparaison de tous les graphes (134)")
+    print("Noyau :", noyaux[noyau])
+    print("Paramètres :c, mu, mu_min, it, nb_tests ",c, mu, mu_min, it, nb_tests)
 
     init = perms.copy()
     perms_opt = np.zeros((nb_graphs, nb_pits, nb_pits))
@@ -92,6 +107,6 @@ if __name__ == '__main__':
 
     for i in range(1, nb_graphs):
         res[i], match[i] = transfo.transformation_permutation_hungarian(perms_opt[i])  # transformation du résultat en matrices de permutations
-    print("Geodesis metric : ", sh.metric_geodesic(match, new_graph_list))
+    print("Geodesis metric : ", metric.metric_geodesic(match, new_graph_list))
     sh.show_sphere(match, new_graph_list)
 

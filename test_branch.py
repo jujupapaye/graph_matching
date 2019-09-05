@@ -6,17 +6,19 @@ import branch_and_bound as branch
 import util
 import show_results_on_sphere as sh
 import numpy as np
-
-
-def calcul_fobj(K0, K1, p):
-    return np.linalg.norm(K0 @ p.T - p.T @ K1.T) ** 2, p.copy()
+import metric
+import convex_simple_hsic as hsic
 
 
 if __name__ == '__main__':
-    K_list, graph_list = load_graph.load_graph_and_kernels(5) # coordonate kernel
+    noyau = 5  # à changer selon le noyau qu'on veut
+    noyaux = ["structure + coordonnées + profondeur", "coordonnées + profondeur ", "structure + profondeur",
+              "structure + coordonnées", "stucture", "coordonnées", "profondeur"]
+    K_list, graph_list = load_graph.load_graph_and_kernels(noyau)
 
-    s0 = 45  # 17
-    s1 = 12  # 28
+    # numéros des sujets à comparer (entre 0 et 133)
+    s0 = 17
+    s1 = 28
 
     g0 = graph_list[s0]
     g1 = graph_list[s1]
@@ -25,6 +27,8 @@ if __name__ == '__main__':
     k1 = K_list[s1]
     k0 = util.normalized_matrix(k0)  # normalisation des données
     k1 = util.normalized_matrix(k1)
+    k0 = util.centered_matrix(k0)
+    k1 = util.centered_matrix(k1)
     nb_pits = max(k0.shape[0], k1.shape[0])
 
 
@@ -49,13 +53,27 @@ if __name__ == '__main__':
 
     # parameters
     mu = 1
-    mu_min = 1e-8
-    it = 500
+    mu_min = 1e-6
+    it = 350
     c = 1
 
-    print("Paramètre mu/mu_min/it/c/nb_test with branch and bound:", mu, mu_min, it, c)
+    print("Comparaison des graphes", s0, "et", s1)
+    print("Noyau :", noyaux[noyau])
+    print("Paramètre mu/mu_min/it/c with branch and bound:", mu, mu_min, it, c)
 
     init = util.init_eig(K0, K1, nb_pits)
-    res = branch.branch_and_bound(K0, K1, init, c, mu, mu_min, it)
+    constraint = branch.branch_and_bound(K0, K1, init, c, mu, mu_min, it)
 
+    # transformation du résultats pour la visualisation
+    match = np.zeros(len(constraint[0]))
+    for i, j in constraint[0]:
+        match[i] = j
+
+    p = np.zeros((nb_pits, nb_pits))
+    for i in range(match.shape[0]):
+        p[i, int(match[i])] = 1
+
+    obj = hsic.calcul_fobj(K0, K1, p)
+    print("Fonction objectif : ", obj[0])
+    print("Moyenne des distances géosédiques", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)  # visualisation des resultats

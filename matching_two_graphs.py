@@ -5,35 +5,34 @@ Test matching pour 2 graphes
 import convex_simple_hsic as hsic
 import util
 import show_results_on_sphere as sh
-import networkx as nx
 import numpy as np
 import approximation_transformation as transfo
-
-
-def calcul_fobj(K0, K1, p):
-    return np.linalg.norm(K0 @ p.T - p.T @ K1.T) ** 2, p.copy()
+import load_graph_and_kernel as load_data
+import metric
 
 
 if __name__ == '__main__':
-    K_list, graph_list = load_data.load_graph_and_kernels(5)
+    noyau = 5  # à changer selon le noyau qu'on veut
+    noyaux = ["structure + coordonnées + profondeur", "coordonnées + profondeur ", "structure + profondeur",
+              "structure + coordonnées", "stucture", "coordonnées", "profondeur"]
+    K_list, graph_list = load_data.load_graph_and_kernels(noyau)  # chargement des graphes et des matrices
 
+    # normalisation et centrage des matrices
     for i in range(len(K_list)):
-        K_list[i] = util.centered_matrix(K_list[i])
         K_list[i] = util.normalized_matrix(K_list[i])
+        K_list[i] = util.centered_matrix(K_list[i])
 
-    # s0 = input("Entrez le numéro du premier sujet à comparer: (entre 0 et 134)")
-    # s1 = input("Entrez le numéro du deuxième sujet à comparer: (entre 0 et 134)")
+    # numéros des sujets à comparer (entre 0 et 133)
+    s0 = 0
+    s1 = 1
 
-    s0 = 0  # 17
-    s1 = 1  # 28
-
-    k0 = K_list[s0]
+    k0 = K_list[s0]  # matrice de gram
     k1 = K_list[s1]
     g0 = graph_list[s0]
     g1 = graph_list[s1]
     nb_pits = max(k0.shape[0], k1.shape[0])
 
-    # préparation des données pour que les matrices ait la même taille
+    # préparation des données pour que les matrices aient la même taille
     # ajout de "faux" pit qui ne ressemble qu'à lui même (que des 0 sauf un 1 sur sa colonne)
     K0 = np.eye(nb_pits)
     K1 = np.eye(nb_pits)
@@ -57,16 +56,18 @@ if __name__ == '__main__':
     mu_min = 1e-8
     it = 1500
     c = 1
-    nb_test = 100
+    nb_test = 500
 
-    print("Paramètre mu/mu_min/it/c/nb_test:", mu, mu_min, it, c, nb_test)
+    print("Comparaison des graphes", s0, "et", s1)
+    print("Noyau :", noyaux[noyau])
+    print("Convex Kernelized Sorting éxécuté", nb_test, "fois")
+    print("Paramètre mu / mu_min / it / c : ", mu, mu_min, it, c)
 
     init = util.init_eig(K0, K1, nb_pits)
     res = hsic.estimate_perm(K0, K1, init, c, mu, mu_min, it)  # méthode minimisation convex
     t = transfo.transformation_permutation_hungarian(res)
     sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1 pour toutes les lignes
-    min_obj, p_min = calcul_fobj(K0, K1, t[0])
-    print("MIN", min_obj)
+    min_obj, p_min = hsic.calcul_fobj(K0, K1, t[0])
 
     for i in range(nb_test):
         init = util.init_random(nb_pits)
@@ -74,11 +75,11 @@ if __name__ == '__main__':
         t = transfo.transformation_permutation_hungarian(res)
         sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1
         perm = t[0].copy()
-        obj = calcul_fobj(K0, K1, perm)[0]
+        obj = hsic.calcul_fobj(K0, K1, perm)[0]
         if obj < min_obj:
             min_obj = obj
             p_min = perm.copy()
-            print("min", min_obj)
 
     match = p_min.argmax(axis=1)
+    print("Moyenne des distances géodésique:", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)

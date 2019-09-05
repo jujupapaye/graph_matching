@@ -7,18 +7,18 @@ import approximation_transformation as transfo
 import branch_and_bound as branch
 import load_graph_and_kernel as load_data
 import time
-
-
-def calcul_fobj(K0, K1, p):
-    return np.linalg.norm(K0 @ p.T - p.T @ K1.T) ** 2, p.copy()
+import metric
 
 
 if __name__ == '__main__':
-    K_list, graph_list = load_data.load_graph_and_kernels(5)
+    noyau = 5  # à changer selon le noyau qu'on veut
+    noyaux = ["structure + coordonnées + profondeur", "coordonnées + profondeur ", "structure + profondeur",
+              "structure + coordonnées", "stucture", "coordonnées", "profondeur"]
+    K_list, graph_list = load_data.load_graph_and_kernels(noyau)  # coordinate kernel
 
     for i in range(len(K_list)):
-        K_list[i] = util.centered_matrix(K_list[i])
         K_list[i] = util.normalized_matrix(K_list[i])
+        K_list[i] = util.centered_matrix(K_list[i])
 
     interet = 1  # choix du point d'interet où on regarde les pits
 
@@ -53,8 +53,8 @@ if __name__ == '__main__':
     for i in range(len(graph_list)):
         new_graph_list[i] = nx.convert_node_labels_to_integers(graph_list[i])  # renommage des noeuds
 
-    s0 = 30   # choix des graphes à comparer (entre 0 et 133)
-    s1 = 2
+    s0 = 20  # choix des graphes à comparer (entre 0 et 133)
+    s1 = 33
 
     k0 = K_list[s0]
     k1 = K_list[s1]
@@ -87,19 +87,20 @@ if __name__ == '__main__':
 
     # parameters for gradient descent
     mu = 1
-    mu_min = 1e-8
+    mu_min = 1e-5
     it = 1000
     c = 1
     nb_test = 300
-
-    print("Paramètre mu/mu_min/it/c/nb_test:", mu, mu_min, it, c, nb_test)
+    print("Comparaison des graphes", s0, "et", s1)
+    print("Noyau :", noyaux[noyau])
+    print("Convex Kernelized Sorting éxécuté", nb_test, "fois")
+    print("Paramètre mu/mu_min/it/c:", mu, mu_min, it, c)
 
     init = util.init_eig(K0, K1, nb_pits)
     res = hsic.estimate_perm(K0, K1, init.copy(), c, mu, mu_min, it)  # méthode minimisation convex
     t = transfo.transformation_permutation_hungarian(res)
     sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1 pour toutes les lignes
-    min_obj, p_min = calcul_fobj(K0, K1, t[0])
-    print("MIN", min_obj)
+    min_obj, p_min = hsic.calcul_fobj(K0, K1, t[0])
 
     for i in range(nb_test):   # on fait plusieurs fois
         init = util.init_random(nb_pits)
@@ -107,20 +108,22 @@ if __name__ == '__main__':
         t = transfo.transformation_permutation_hungarian(res)
         sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1
         perm = t[0].copy()
-        obj = calcul_fobj(K0, K1, perm)[0]
+        obj = hsic.calcul_fobj(K0, K1, perm)[0]
         if obj < min_obj:
             min_obj = obj
             p_min = perm.copy()   # on choisit la permutation où est la fonction est au minimum
-            print("min", min_obj)
 
     match = p_min.argmax(axis=1)
+    print("Fonction objectif:", min_obj)
+    print("Moyenne des distances géodésique:", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)  # visualisation des résultats sur sphere
 
+    print("Branch and bound en cours, cela peut durer un moment...")
     init2 = util.init_eig(K0, K1, nb_pits)
     debut = time.clock()
     constraint = branch.branch_and_bound(K0, K1, init2, c=1, mu=1, mu_min=1e-7, it=300)  # méthode du branch and bound
     fin = time.clock()
-    print("time:", fin-debut, " sec")
+    print("Temps d'éxécution:", fin-debut, " sec")
 
     match = np.zeros(len(constraint[0]))
     for i, j in constraint[0]:
@@ -130,16 +133,7 @@ if __name__ == '__main__':
     for i in range(match.shape[0]):
         p[i, int(match[i])] = 1
 
-    obj = calcul_fobj(K0, K1, p)
-
+    obj = hsic.calcul_fobj(K0, K1, p)
+    print("Fonction objectif : ", obj[0])
+    print("Moyenne des distances géosédiques", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)
-
-    # match = np.array([7,3,9,8,2,4,1,6,5,0])   # b and b for K[0] et K[2] de taille 10 sur point -43, 6, 89 rayon 80
-    # c=1, mu=1, mu_min=1e-7, it=500   obj = 0.78864
-
-    # match = np.array([2., 4., 7., 1., 9., 5., 0., 8., 6., 3.]) for K[2] et K[3] de taille 10 sur point -43, 6, 89 rayon 80
-    # c=1, mu=1, mu_min=1e-7, it=300   obj =0.5576386506612289
-    # match = np.array([3, 0, 2, 1, 4, 5, 6, 7, 9, 8]) -> meilleur match a la main pourtant obj = 1.34
-    # match =np.array([7., 0., 2., 3., 6., 5., 1., 8., 9., 4.]) -> b&b avec noyau 3 obj =0.9484707644667182
-    # match = np.array([6., 0., 3., 2., 9., 5., 8., 1., 7., 4.])-> b&b avec noyau 1  obj=0.494461710728216
-    # match = np.array([6., 0., 3., 2., 9., 5., 8., 1., 7., 4.]) np.noyau 0 obj=0.5251326515258705
