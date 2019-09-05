@@ -61,6 +61,8 @@ Le branch and bound est une méthode qui nous permet de trouver une solution opt
 d'être beaucoup plus longue car dans le pire des cas, on peut se retrouver à explorer l'ensemble
 des permutations.
 
+On peut l'appliquer seulement pour des petites matrices (taille<20).
+
 
 ## Implémentation
 
@@ -72,14 +74,15 @@ Voici comment est organisé ce dépôt:
 gradient et la descente du gradient pour l'appariement de 2 ensembles
 - convex_multi_hsic.py contient les méthodes utiles pour la création des fonctions objectif,
 gradient et la descente du gradient pour l'appariement de plusieurs ensembles
-- matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparerpuis affiche les résultats sur une sphere
+- matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparer puis affiche les résultats sur une sphere
 - multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere
 - matching_on_pt_of_interests.py est le programme permettant de comparer les 134 autour de 2 points d'interet différents
-- matching_2_graph_on_pt_on_interest.py  est le programme permettant de 2 graphes choisis autour de 2 points d'intérêts différents
+- matching_2_graph_on_pt_on_interest.py  est le programme permettant de comparer 2 graphes choisis autour de 2 points d'intérêts différents
 - show_results_on_sphere.py contient les méthodes utiles à la visualisation des résultats
 - branch_and_bound.py contient les méthodes utiles pour l'algorithme du branch and bound
-- test_branch.py est le programme contenant un test du branch and bound pour la comparaison de 2 graphes (petits=à un point d'intérêt)
-- load_graph_and_kernel.py contient les méthodes utiles à la récupération des données
+- metric.py contient les méthodes utiles pour calculer les moyennes des distances des appareillages
+- test_branch.py est le programme contenant un test du branch and bound pour la comparaison de 2 graphes (à un point d'intérêt)
+- load_graph_and_kernel.py contient les méthodes utiles pour la récupération des données (graphes + matrices de Gram)
 
 ## Prérequis
 
