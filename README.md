@@ -81,14 +81,19 @@ gradient et la descente du gradient pour l'appariement de plusieurs ensembles
 - convexminimization2.py contient les méthodes utilisées pour la descente du gradient
 
 ###executable_matching
+
 ####multiple_matching
+
 - multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere
 - matching_on_pt_of_interests.py est le programme permettant de comparer les 134 autour de 2 points d'interet différents
+
 ####two_graph_matching
+
 - matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparer puis affiche les résultats sur une sphere
 - matching_2_graph_on_pt_on_interest.py  est le programme permettant de comparer 2 graphes choisis autour de 2 points d'intérêts différents
 
 ###others tests 
+
 tests plus très utiles
 
 ###tools
