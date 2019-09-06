@@ -15,7 +15,7 @@ import metric
 
 
 if __name__ == '__main__':
-    noyau = 3  # à changer selon le noyau qu'on veut
+    noyau = 5  # à changer selon le noyau qu'on veut
     noyaux = ["structure + coordonnées + profondeur", "coordonnées + profondeur ", "structure + profondeur",
               "structure + coordonnées", "stucture", "coordonnées", "profondeur"]
     K_list, graph_list = load_data.load_graph_and_kernels(noyau)  # coordinate kernel

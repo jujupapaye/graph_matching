@@ -138,12 +138,12 @@ def show_graph_for_2(matching, g0, g1):
     :param g1: graphe
     """
     max_node = max(g0.number_of_nodes(), g1.number_of_nodes())
-    print(max_node)
     colors = np.ones(g1.number_of_nodes()) * (max_node-1)
     colors2 = np.ones(g0.number_of_nodes()) * (max_node-1)
     pos0 = dict()
     pos1 = dict()
     # bonne position des noeuds sur les graphes
+    # (on prend juste x,y vu qu'ils sont quasiment sur un plan plat quand on regarde qu'une zone d'interet)
     for i in range(g0.number_of_nodes()):
         pos0[i] = [g0.node[i]['coord'][0], g0.node[i]['coord'][1]]
     for i in range(g1.number_of_nodes()):
