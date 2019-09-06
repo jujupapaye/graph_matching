@@ -74,7 +74,7 @@ Contient les données (les graphes)
 - convex_simple_hsic.py contient les méthodes utiles pour la création des fonctions objectif,
 gradient et la descente du gradient pour l'appariement de 2 ensembles
 - convex_multi_hsic.py contient les méthodes utiles pour la création des fonctions objectif,
-gradient et la descente du gradient pour l'appariement de plusieurs ensembles
+gradient et la descente du gradient pour l'appariement de plusieurs ensembles (PROBLEME ICI)
 - branch_and_bound.py contient les méthodes utiles pour l'algorithme du branch and bound (comparaison de 2 graphes)
 
 ###minimization
@@ -84,8 +84,8 @@ gradient et la descente du gradient pour l'appariement de plusieurs ensembles
 
 ####multiple_matching
 
-- multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere
-- matching_on_pt_of_interests.py est le programme permettant de comparer les 134 autour de 2 points d'interet différents
+- multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere(ATTENTION : PROBLEME ICI NE MARCHE PAS)
+- matching_on_pt_of_interests.py est le programme permettant de comparer les 134 autour de 2 points d'interet différents en comparant 2 à 2 les graphes
 
 ####two_graph_matching
 
