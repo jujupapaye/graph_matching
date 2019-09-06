@@ -89,7 +89,7 @@ if __name__ == '__main__':
     mu_min = 1e-5
     it = 1000
     c = 1
-    nb_test = 1
+    nb_test = 300
     print("Comparaison des graphes", s0, "et", s1)
     print("Noyau :", noyaux[noyau])
     print("Convex Kernelized Sorting éxécuté", nb_test, "fois")
