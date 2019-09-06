@@ -66,32 +66,32 @@ On peut l'appliquer seulement pour des petites matrices (taille<20).
 
 ## Implémentation
 
-#data
+###data
 
 Contient les données (les graphes)
 
-#hsic
+###hsic
 - convex_simple_hsic.py contient les méthodes utiles pour la création des fonctions objectif,
 gradient et la descente du gradient pour l'appariement de 2 ensembles
 - convex_multi_hsic.py contient les méthodes utiles pour la création des fonctions objectif,
 gradient et la descente du gradient pour l'appariement de plusieurs ensembles
 - branch_and_bound.py contient les méthodes utiles pour l'algorithme du branch and bound (comparaison de 2 graphes)
 
-#minimization
+###minimization
 - convexminimization2.py contient les méthodes utilisées pour la descente du gradient
 
-#multiple matching
+###executable_matching
+####multiple_matching
 - multiway_matching_graph.py est le programme qui charge les graphes et permet de tous les comparer à l'aide du hsic multiple puis affiche les résultats sur une sphere
 - matching_on_pt_of_interests.py est le programme permettant de comparer les 134 autour de 2 points d'interet différents
-
-#two_graph_matching
+####two_graph_matching
 - matching_two_graphs.py est le programme qui charge les graphes et permet d'en choisir 2 à comparer puis affiche les résultats sur une sphere
 - matching_2_graph_on_pt_on_interest.py  est le programme permettant de comparer 2 graphes choisis autour de 2 points d'intérêts différents
 
-#others tests 
+###others tests 
 tests plus très utiles
 
-#tools
+###tools
 - show_results_on_sphere.py contient les méthodes utiles à la visualisation des résultats
 - branch_and_bound.py contient les méthodes utiles pour l'algorithme du branch and bound
 - metric.py contient les méthodes utiles pour calculer les moyennes des distances des appareillages
