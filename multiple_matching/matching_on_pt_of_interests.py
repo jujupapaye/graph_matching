@@ -3,15 +3,11 @@ Matching de plusieurs graphes sur centres d'interets
 en comparant tous les graphes à un graphes modèle
 """
 
-import convex_simple_hsic as hsic
+from hsic import convex_simple as convex_simple_hsic
 import networkx as nx
-import show_results_on_sphere as sh
-import util
+from tools import util, approximation_transformation as transfo, metric, load_graph_and_kernel as load_data, \
+    show_results_on_sphere as sh
 import numpy as np
-import approximation_transformation as transfo
-import load_graph_and_kernel as load_data
-import metric
-
 
 if __name__ == '__main__':
     noyau = 5   # à changer selon le noyau qu'on veut
@@ -95,14 +91,14 @@ if __name__ == '__main__':
     for i in range(1, nb_graphs):
         print(i, "/", nb_graphs)
         init = util.init_eig(new_K_list[0], new_K_list[i], nb_pits)
-        perm = hsic.estimate_perm(new_K_list[0], new_K_list[i], init, c, mu, mu_min, it)
+        perm = convex_simple_hsic.estimate_perm(new_K_list[0], new_K_list[i], init, c, mu, mu_min, it)
         t = transfo.transformation_permutation_hungarian(perm)
-        min, perms_opt[i] = hsic.calcul_fobj(new_K_list[0], new_K_list[i], t[0])
+        min, perms_opt[i] = convex_simple_hsic.calcul_fobj(new_K_list[0], new_K_list[i], t[0])
         for t in range(nb_tests):
             init = util.init_random(nb_pits)
-            perm = hsic.estimate_perm(new_K_list[0], new_K_list[i], init, c, mu, mu_min, it)
+            perm = convex_simple_hsic.estimate_perm(new_K_list[0], new_K_list[i], init, c, mu, mu_min, it)
             t = transfo.transformation_permutation_hungarian(perm)
-            obj = hsic.calcul_fobj(new_K_list[0], new_K_list[i], t[0])[0]
+            obj = convex_simple_hsic.calcul_fobj(new_K_list[0], new_K_list[i], t[0])[0]
             if obj < min:
                 perms_opt[i] = t[0].copy()
                 min = obj

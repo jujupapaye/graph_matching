@@ -1,14 +1,9 @@
 """
 Test matching pour 2 graphes avec branch and bound
 """
-import load_graph_and_kernel as load_graph
-import branch_and_bound as branch
-import util
-import show_results_on_sphere as sh
+from tools import util, metric, load_graph_and_kernel as load_graph, show_results_on_sphere as sh
 import numpy as np
-import metric
-import convex_simple_hsic as hsic
-
+from hsic import convex_simple as convex_simple_hsic, branch_and_bound as branch
 
 if __name__ == '__main__':
     noyau = 5  # à changer selon le noyau qu'on veut
@@ -73,7 +68,7 @@ if __name__ == '__main__':
     for i in range(match.shape[0]):
         p[i, int(match[i])] = 1
 
-    obj = hsic.calcul_fobj(K0, K1, p)
+    obj = convex_simple_hsic.calcul_fobj(K0, K1, p)
     print("Fonction objectif : ", obj[0])
     print("Moyenne des distances géosédiques", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)  # visualisation des resultats

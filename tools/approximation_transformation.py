@@ -6,7 +6,7 @@
 """
 
 import numpy as np
-import munkres
+from tools import munkres
 
 
 def transformation_permutation(p):

@@ -2,17 +2,12 @@
 Test matching de 2 graphes sur des points d'interets
 """
 
-import convex_simple_hsic as hsic
+from hsic import convex_simple as convex_simple_hsic, branch_and_bound as branch
 import networkx as nx
-import show_results_on_sphere as sh
-import util
+from tools import util, approximation_transformation as transfo, metric, load_graph_and_kernel as load_data, \
+    show_results_on_sphere as sh
 import numpy as np
-import approximation_transformation as transfo
-import branch_and_bound as branch
-import load_graph_and_kernel as load_data
 import time
-import metric
-
 
 if __name__ == '__main__':
     noyau = 5  # à changer selon le noyau qu'on veut
@@ -101,18 +96,18 @@ if __name__ == '__main__':
     print("Paramètre mu/mu_min/it/c:", mu, mu_min, it, c)
 
     init = util.init_eig(K0, K1, nb_pits)
-    res = hsic.estimate_perm(K0, K1, init.copy(), c, mu, mu_min, it)  # méthode minimisation convex
+    res = convex_simple_hsic.estimate_perm(K0, K1, init.copy(), c, mu, mu_min, it)  # méthode minimisation convex
     t = transfo.transformation_permutation_hungarian(res)
     sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1 pour toutes les lignes
-    min_obj, p_min = hsic.calcul_fobj(K0, K1, t[0])
+    min_obj, p_min = convex_simple_hsic.calcul_fobj(K0, K1, t[0])
 
     for i in range(nb_test):   # on fait plusieurs fois
         init = util.init_random(nb_pits)
-        res = hsic.estimate_perm(K0, K1, init.copy(), c, mu, mu_min, it)  # méthode minimisation convex
+        res = convex_simple_hsic.estimate_perm(K0, K1, init.copy(), c, mu, mu_min, it)  # méthode minimisation convex
         t = transfo.transformation_permutation_hungarian(res)
         sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1
         perm = t[0].copy()
-        obj = hsic.calcul_fobj(K0, K1, perm)[0]
+        obj = convex_simple_hsic.calcul_fobj(K0, K1, perm)[0]
         if obj < min_obj:
             min_obj = obj
             p_min = perm.copy()   # on choisit la permutation où est la fonction est au minimum
@@ -137,7 +132,7 @@ if __name__ == '__main__':
     for i in range(match.shape[0]):
         p[i, int(match[i])] = 1
 
-    obj = hsic.calcul_fobj(K0, K1, p)
+    obj = convex_simple_hsic.calcul_fobj(K0, K1, p)
     print("Fonction objectif : ", obj[0])
     print("Moyenne des distances géosédiques", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)

@@ -7,11 +7,9 @@
 """
 
 import numpy as np
-import convex_simple_hsic as hsic
-import approximation_transformation as transfo
-import projector as proj
-import convexminimization2 as cvm
-from numba import jit
+from hsic import convex_simple as convex_simple_hsic
+from tools import projector as proj, approximation_transformation as transfo
+from minimization import convexminimization2 as cvm
 
 
 def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
@@ -27,8 +25,8 @@ def compute_lower_bound(K, L, init, c, mu, mu_min, it, constraint):
     :param constraint: les contraintes fixés qu'on ne peut pas toucher
     :return: estimation de la borne inférieur avec ses contraintes
     """
-    objective = hsic.create_objective_function(K, L, init, c)
-    gradient = hsic.create_gradient_function(K, L, init, c)
+    objective = convex_simple_hsic.create_objective_function(K, L, init, c)
+    gradient = convex_simple_hsic.create_gradient_function(K, L, init, c)
     projector = proj.create_projector_neg_and_fixed(constraint)
     res, mu = cvm.monotone_fista_support(objective, gradient, init, mu, mu_min, it, projector)
     filtre = proj.creation_filtre(constraint, K.shape[0])

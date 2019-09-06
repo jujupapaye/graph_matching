@@ -2,12 +2,10 @@
 Tests du matching de plusieurs graphes de pits
 """
 
-import convex_multi_hsic as multihsic
-import show_results_on_sphere as sh
-import util
+from hsic import convex_multi as multihsic
+from tools import util, approximation_transformation as transfo, load_graph_and_kernel as load_data, \
+    show_results_on_sphere as sh
 import numpy as np
-import approximation_transformation as transfo
-import load_graph_and_kernel as load_data
 
 if __name__ == '__main__':
     K_list, graph_list = load_data.load_graph_and_kernels(5)

@@ -2,14 +2,10 @@
 Test matching pour 2 graphes
 """
 
-import convex_simple_hsic as hsic
-import util
-import show_results_on_sphere as sh
+from hsic import convex_simple as convex_simple_hsic
+from tools import util, approximation_transformation as transfo, metric, load_graph_and_kernel as load_data, \
+    show_results_on_sphere as sh
 import numpy as np
-import approximation_transformation as transfo
-import load_graph_and_kernel as load_data
-import metric
-
 
 if __name__ == '__main__':
     noyau = 5  # à changer selon le noyau qu'on veut
@@ -64,18 +60,18 @@ if __name__ == '__main__':
     print("Paramètre mu / mu_min / it / c : ", mu, mu_min, it, c)
 
     init = util.init_eig(K0, K1, nb_pits)
-    res = hsic.estimate_perm(K0, K1, init, c, mu, mu_min, it)  # méthode minimisation convex
+    res = convex_simple_hsic.estimate_perm(K0, K1, init, c, mu, mu_min, it)  # méthode minimisation convex
     t = transfo.transformation_permutation_hungarian(res)
     sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1 pour toutes les lignes
-    min_obj, p_min = hsic.calcul_fobj(K0, K1, t[0])
+    min_obj, p_min = convex_simple_hsic.calcul_fobj(K0, K1, t[0])
 
     for i in range(nb_test):
         init = util.init_random(nb_pits)
-        res = hsic.estimate_perm(K0, K1, init.copy(), c, mu, mu_min, it)  # méthode minimisation convex
+        res = convex_simple_hsic.estimate_perm(K0, K1, init.copy(), c, mu, mu_min, it)  # méthode minimisation convex
         t = transfo.transformation_permutation_hungarian(res)
         sorted_indices = t[0].argmax(axis=1)  # on récupère les indices où il y a un 1
         perm = t[0].copy()
-        obj = hsic.calcul_fobj(K0, K1, perm)[0]
+        obj = convex_simple_hsic.calcul_fobj(K0, K1, perm)[0]
         if obj < min_obj:
             min_obj = obj
             p_min = perm.copy()

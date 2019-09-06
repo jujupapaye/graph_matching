@@ -7,8 +7,8 @@
 """
 
 import numpy as np
-import convexminimization2 as cvm
-import projector as proj
+from minimization import convexminimization2 as cvm
+from tools import projector as proj
 
 
 def create_objective_function(K, L, pi, c):

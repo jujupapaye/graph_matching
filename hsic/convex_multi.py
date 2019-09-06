@@ -6,8 +6,8 @@ fonctions de création des fonctions objectif, gradient
 et estimation des matrices de permutations à partir des n noyaux à comparer
 
 """
-import convexminimization2 as cvm
-import projector as proj
+from minimization import convexminimization2 as cvm
+from tools import projector as proj
 import numpy as np
 
 
