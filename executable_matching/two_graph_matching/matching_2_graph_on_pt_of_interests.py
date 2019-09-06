@@ -89,7 +89,7 @@ if __name__ == '__main__':
     mu_min = 1e-5
     it = 1000
     c = 1
-    nb_test = 300
+    nb_test = 1
     print("Comparaison des graphes", s0, "et", s1)
     print("Noyau :", noyaux[noyau])
     print("Convex Kernelized Sorting éxécuté", nb_test, "fois")
@@ -116,6 +116,7 @@ if __name__ == '__main__':
     print("Fonction objectif:", min_obj)
     print("Moyenne des distances géodésique:", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)  # visualisation des résultats sur sphere
+    sh.show_graph_for_2(match, g0, g1)
 
     print("Branch and bound en cours, cela peut durer un moment...")
     init2 = util.init_eig(K0, K1, nb_pits)
