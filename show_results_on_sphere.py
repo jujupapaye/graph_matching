@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import trimesh as trim
 import slam.plot as splt
+import networkx as nx
+from matplotlib import cm
 
 
 def show_sphere_for_2(matching, g0, g1):
@@ -125,6 +127,36 @@ def pits_sphere(graphs):
             sphere_mesh += pit
 
     sphere_mesh.show()
+
+
+def show_graph_for_2(matching, g0, g1):
+    """
+    Représente l'appareillage de 2 graphes avec matplotlib où les noeuds de même couleurs se correspondent
+    et les noeuds bleu foncé n'ont pas de correspondances, à droite g0 à gauche g1
+    :param matching: tableau à une dimension du matching où g0(matching[i]) correspond à g1(i)
+    :param g0: graphe
+    :param g1: graphe
+    """
+    max_node = max(g0.number_of_nodes(), g1.number_of_nodes())
+    print(max_node)
+    colors = np.ones(g1.number_of_nodes()) * (max_node-1)
+    colors2 = np.ones(g0.number_of_nodes()) * (max_node-1)
+    pos0 = dict()
+    pos1 = dict()
+    # bonne position des noeuds sur les graphes
+    for i in range(g0.number_of_nodes()):
+        pos0[i] = [g0.node[i]['coord'][0], g0.node[i]['coord'][1]]
+    for i in range(g1.number_of_nodes()):
+        pos1[i] = [g1.node[i]['coord'][0], g1.node[i]['coord'][1]]
+    for i in range(len(matching)):
+        if g1.has_node(i) and g0.has_node(int(matching[i])):
+            colors[i] = i
+            colors2[int(matching[i])] = i
+    plt.subplot(121)
+    nx.draw_networkx(g0, with_labels=True, node_color=colors2, cmap='jet', cmin=0, cmax=max_node-1, label='g0', pos=pos0)
+    plt.subplot(122)
+    nx.draw_networkx(g1, with_labels=True, node_color=colors, cmap='jet', cmin=0, cmax=max_node-1, label='g1', pos=pos1)
+    plt.show()
 
 
 def show_sphere_for_2_patients(matching, g0, g1):

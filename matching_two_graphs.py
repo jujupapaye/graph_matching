@@ -83,3 +83,5 @@ if __name__ == '__main__':
     match = p_min.argmax(axis=1)
     print("Moyenne des distances géodésique:", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)
+    sh.show_graph_for_2(match, g0, g1)
+

@@ -1,3 +1,7 @@
+"""
+Test matching de 2 graphes sur des points d'interets
+"""
+
 import convex_simple_hsic as hsic
 import networkx as nx
 import show_results_on_sphere as sh
@@ -11,7 +15,7 @@ import metric
 
 
 if __name__ == '__main__':
-    noyau = 5  # à changer selon le noyau qu'on veut
+    noyau = 3  # à changer selon le noyau qu'on veut
     noyaux = ["structure + coordonnées + profondeur", "coordonnées + profondeur ", "structure + profondeur",
               "structure + coordonnées", "stucture", "coordonnées", "profondeur"]
     K_list, graph_list = load_data.load_graph_and_kernels(noyau)  # coordinate kernel
@@ -137,3 +141,5 @@ if __name__ == '__main__':
     print("Fonction objectif : ", obj[0])
     print("Moyenne des distances géosédiques", metric.metric_geodesic_for_2(match, g0, g1))
     sh.show_sphere_for_2(match, g0, g1)
+    sh.show_graph_for_2(match, g0, g1)
+

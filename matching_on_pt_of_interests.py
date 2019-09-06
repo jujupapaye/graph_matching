@@ -1,3 +1,8 @@
+"""
+Matching de plusieurs graphes sur centres d'interets
+en comparant tous les graphes à un graphes modèle
+"""
+
 import convex_simple_hsic as hsic
 import networkx as nx
 import show_results_on_sphere as sh
