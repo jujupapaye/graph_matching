@@ -90,6 +90,7 @@ gradient et la descente du gradient pour l'appariement de plusieurs ensembles
 
 #others tests 
 tests plus très utiles
+
 #tools
 - show_results_on_sphere.py contient les méthodes utiles à la visualisation des résultats
 - branch_and_bound.py contient les méthodes utiles pour l'algorithme du branch and bound
