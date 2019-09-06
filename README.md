@@ -97,7 +97,7 @@ gradient et la descente du gradient pour l'appariement de plusieurs ensembles (P
 tests plus très utiles
 
 ###tools
-- show_results_on_sphere.py contient les méthodes utiles à la visualisation des résultats
+- show_results.py contient les méthodes utiles à la visualisation des résultats
 - branch_and_bound.py contient les méthodes utiles pour l'algorithme du branch and bound
 - metric.py contient les méthodes utiles pour calculer les moyennes des distances des appareillages
 - test_branch.py est le programme contenant un test du branch and bound pour la comparaison de 2 graphes (à un point d'intérêt)

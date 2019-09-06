@@ -4,7 +4,7 @@ Test matching pour 2 graphes
 
 from hsic import convex_simple as convex_simple_hsic
 from tools import util, approximation_transformation as transfo, metric, load_graph_and_kernel as load_data, \
-    show_results_on_sphere as sh
+    show_results as sh
 import numpy as np
 
 if __name__ == '__main__':

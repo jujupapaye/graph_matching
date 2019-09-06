@@ -5,7 +5,7 @@ Test matching de 2 graphes sur des points d'interets
 from hsic import convex_simple as convex_simple_hsic, branch_and_bound as branch
 import networkx as nx
 from tools import util, approximation_transformation as transfo, metric, load_graph_and_kernel as load_data, \
-    show_results_on_sphere as sh
+    show_results as sh
 import numpy as np
 import time
 

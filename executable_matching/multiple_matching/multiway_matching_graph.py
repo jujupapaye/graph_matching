@@ -4,7 +4,7 @@ Tests du matching de plusieurs graphes de pits
 
 from hsic import convex_multi as multihsic
 from tools import util, approximation_transformation as transfo, load_graph_and_kernel as load_data, \
-    show_results_on_sphere as sh
+    show_results as sh
 import numpy as np
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 """
 Test matching pour 2 graphes avec branch and bound
 """
-from tools import util, metric, load_graph_and_kernel as load_graph, show_results_on_sphere as sh
+from tools import util, metric, load_graph_and_kernel as load_graph, show_results as sh
 import numpy as np
 from hsic import convex_simple as convex_simple_hsic, branch_and_bound as branch
 
